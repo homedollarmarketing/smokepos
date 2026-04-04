@@ -1,0 +1,122 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.role-form-page {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    align-self: flex-start;
+}
+
+.card {
+    @include card;
+    padding: $spacing-lg;
+
+    h1 {
+        font-size: $font-size-xl;
+        font-weight: 700;
+        margin: 0 0 $spacing-lg;
+    }
+}
+
+.loading {
+    text-align: center;
+    padding: $spacing-2xl;
+    color: $text-muted;
+}
+
+.error-banner {
+    @include flex-start;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    margin-bottom: $spacing-md;
+    background: $danger-light;
+    color: $danger;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+}
+
+.form-group {
+    margin-bottom: $spacing-md;
+
+    label {
+        display: block;
+        font-size: $font-size-sm;
+        font-weight: 500;
+        margin-bottom: $spacing-xs;
+        color: $text-primary;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+    }
+
+    .hint {
+        display: block;
+        font-size: $font-size-xs;
+        color: $text-muted;
+        margin-top: $spacing-xs;
+    }
+
+    .error {
+        display: block;
+        font-size: $font-size-xs;
+        color: $danger;
+        margin-top: $spacing-xs;
+    }
+}
+
+.permissions-container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    margin-top: $spacing-sm;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: $spacing-sm;
+    border: 1px solid $surface-border;
+    padding: $spacing-md;
+    border-radius: $border-radius;
+    background: $gray-50;
+}
+
+.permission-group {
+    h4 {
+        font-size: $font-size-xs;
+        font-weight: 700;
+        color: $text-secondary;
+        margin: 0 0 $spacing-sm 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding-bottom: $spacing-xs;
+        border-bottom: 1px solid $surface-border;
+    }
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: $spacing-sm;
+}
+
+.permission-item {
+    font-size: $font-size-sm;
+}
+
+::ng-deep .w-full {
+    width: 100%;
+}
+
+.form-actions {
+    @include flex-end;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $surface-border;
+}

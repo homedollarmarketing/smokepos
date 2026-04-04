@@ -1,0 +1,164 @@
+<div class="dashboard">
+  <!-- Stats Cards (permission-filtered, only shown if user has any stats to view) -->
+  @if (stats().length > 0) {
+    <div class="stats-grid">
+      @for (stat of stats(); track $index) {
+        <app-stats-card
+          [title]="stat.title"
+          [value]="stat.value"
+          [subtitle]="stat.subtitle"
+          [icon]="stat.icon"
+          [iconBgColor]="stat.iconBgColor"
+          [iconColor]="stat.iconColor"
+          [highlighted]="stat.highlighted || false"
+          [class.clickable]="stat.route"
+          (click)="onStatClick(stat)"
+        ></app-stats-card>
+      }
+    </div>
+  }
+
+  <!-- Main Content Grid -->
+  <div class="dashboard-grid">
+    <!-- Inventory Health Chart (requires dashboard.inventory permission) -->
+    @if (canViewInventory()) {
+      <div class="card inventory-health">
+        <div class="card-header">
+          <h3>Inventory Health</h3>
+          <span class="branch-badge">{{ branchService.currentBranchName() }}</span>
+        </div>
+        @if (statsLoading()) {
+          <div class="chart-loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading chart...</span>
+          </div>
+        } @else if (inventoryChartData()) {
+          <div class="chart-container">
+            <p-chart
+              type="doughnut"
+              [data]="inventoryChartData()"
+              [options]="inventoryChartOptions"
+              [style]="{ width: '100%', height: '250px' }"
+            >
+            </p-chart>
+          </div>
+          <div class="inventory-summary">
+            <div class="summary-item">
+              <span class="summary-value">{{ dashboardStats()?.totalProductsCount || 0 }}</span>
+              <span class="summary-label">Total Products</span>
+            </div>
+            <div class="summary-item warning">
+              <span class="summary-value">{{ dashboardStats()?.lowStockCount || 0 }}</span>
+              <span class="summary-label">Low Stock</span>
+            </div>
+            <div class="summary-item danger">
+              <span class="summary-value">{{ dashboardStats()?.outOfStockCount || 0 }}</span>
+              <span class="summary-label">Out of Stock</span>
+            </div>
+          </div>
+        } @else {
+          <div class="empty-chart">
+            <i class="pi pi-chart-pie"></i>
+            <p>No inventory data available</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Financial Overview Chart (requires dashboard.financial permission) -->
+    @if (canViewFinancial()) {
+      <div class="card financial-overview">
+        <div class="card-header">
+          <h3>Financial Overview</h3>
+          <span class="branch-badge">Last 6 Months</span>
+        </div>
+        @if (statsLoading()) {
+          <div class="chart-loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading chart...</span>
+          </div>
+        } @else if (financialChartData()) {
+          <div class="chart-container large">
+            <p-chart
+              type="bar"
+              [data]="financialChartData()"
+              [options]="financialChartOptions"
+              [style]="{ width: '100%', height: '280px' }"
+            >
+            </p-chart>
+          </div>
+        } @else {
+          <div class="empty-chart">
+            <i class="pi pi-chart-bar"></i>
+            <p>No financial data available</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Inbox Section (requires message.view + main branch) -->
+    @if (canViewMessages()) {
+      <div class="card inbox">
+        <div class="inbox-header">
+          <h3>Inbox</h3>
+          <button
+            pButton
+            label="View All"
+            class="p-button-text p-button-sm"
+            (click)="viewAllMessages()"
+          ></button>
+        </div>
+
+        @if (inboxLoading()) {
+          <div class="loading">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading messages...</span>
+          </div>
+        } @else if (inboxMessages().length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <p>No unread messages</p>
+          </div>
+        } @else {
+          <div class="inbox-list">
+            @for (message of inboxMessages(); track message.id) {
+              <div class="inbox-item" (click)="onMessageClick(message)">
+                <div class="inbox-item-header">
+                  <span class="inbox-sender">{{ message.name }}</span>
+                  <span class="inbox-date">{{ message.createdAt | date: 'short' }}</span>
+                </div>
+                <p class="inbox-subject">{{ message.subject }}</p>
+                <p class="inbox-preview">
+                  {{ message.message | slice: 0 : 80
+                  }}{{ message.message.length > 80 ? '...' : '' }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Quick Actions (ALWAYS VISIBLE if user has any create permissions) -->
+    @if (hasQuickActions()) {
+      <div class="card quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="actions-list">
+          @for (action of topQuickActions(); track action.route) {
+            <button class="action-item" (click)="onQuickAction(action)">
+              <span
+                class="action-icon"
+                [style.background-color]="action.bgColor"
+                [style.color]="action.color"
+              >
+                <i [class]="action.icon"></i>
+              </span>
+              <span class="action-label">{{ action.label }}</span>
+              <i class="pi pi-arrow-right action-arrow"></i>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

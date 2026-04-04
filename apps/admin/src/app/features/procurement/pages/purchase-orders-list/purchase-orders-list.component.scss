@@ -1,0 +1,247 @@
+.purchase-orders-list {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+
+    .header-content {
+      h1 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .subtitle {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+    }
+  }
+
+  .filters-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+
+    i {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.625rem 1rem 0.625rem 2.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #fff;
+      color: #374151;
+      transition: all 0.15s ease;
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+    }
+  }
+
+  .filter-select {
+    min-width: 180px;
+  }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 4rem;
+    color: #6b7280;
+    font-size: 1rem;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+
+    .empty-icon {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+
+      i {
+        font-size: 1.5rem;
+        color: #9ca3af;
+      }
+    }
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    p {
+      margin: 0 0 1.5rem 0;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  }
+
+  .table-container {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+
+    ::ng-deep {
+      .p-datatable {
+        .p-datatable-thead > tr > th {
+          background: #f9fafb;
+          border-color: #e5e7eb;
+          color: #374151;
+          font-weight: 600;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          padding: 1rem 1.25rem;
+
+          &.text-right {
+            text-align: right;
+          }
+        }
+
+        .p-datatable-tbody > tr {
+          &.clickable-row {
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+
+            &:hover {
+              background: #f9fafb;
+            }
+
+            &:active {
+              background: #f3f4f6;
+            }
+          }
+
+          > td {
+            padding: 1rem 1.25rem;
+            border-color: #f3f4f6;
+            font-size: 0.875rem;
+            color: #374151;
+            vertical-align: middle;
+
+            &.text-right {
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+
+    .po-number {
+      font-weight: 600;
+      color: #4f46e5;
+    }
+
+    .supplier-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+
+      .supplier-name {
+        font-weight: 500;
+        color: #111827;
+      }
+
+      .supplier-code {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+    }
+
+    .amount {
+      font-weight: 600;
+      color: #059669;
+    }
+
+    .date {
+      color: #6b7280;
+    }
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    margin-top: 0.5rem;
+
+    .pagination-info {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .page-indicator {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        min-width: 4rem;
+        text-align: center;
+      }
+    }
+  }
+}

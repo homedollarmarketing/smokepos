@@ -1,0 +1,217 @@
+<div class="page" *ngIf="product">
+  <app-page-header
+    [title]="product.name"
+    subtitle="Product Details"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <div class="grid-layout">
+    <!-- Main Info -->
+    <div class="card main-card">
+      <div class="header-section">
+        <img
+          [src]="product.images?.[0] || 'assets/placeholder.png'"
+          alt="Product Image"
+          class="product-img"
+        />
+        <div class="header-text">
+          <div class="sku-badge" *ngIf="product.sku">SKU: {{ product.sku }}</div>
+          <div class="status-badge" [class.active]="product.isActive">
+            {{ product.isActive ? 'Active' : 'Inactive' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="description-section">
+        <h3>Description</h3>
+        <p>{{ product.description || 'No description provided.' }}</p>
+      </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="sidebar">
+      <div class="card">
+        <h3>Pricing & Stock</h3>
+        <div class="stat-row">
+          <span>Selling Price</span>
+          <span class="price">{{ product.price | currency: 'UGX' : 'symbol' : '1.0-0' }}</span>
+        </div>
+        <div class="stat-row">
+          <span>Buying Price</span>
+          <span>{{ product.costPrice !== null ? (product.costPrice | currency: 'UGX' : 'symbol' : '1.0-0') : 'Not set' }}</span>
+        </div>
+        @if (getProfitMargin() !== null) {
+          <div class="stat-row">
+            <span>Profit Margin</span>
+            <span [class.positive-margin]="getProfitMargin()! > 0" [class.negative-margin]="getProfitMargin()! < 0">
+              {{ getProfitMargin() | number: '1.1-1' }}%
+            </span>
+          </div>
+          <div class="stat-row">
+            <span>Gross Profit</span>
+            <span>{{ (product.price - product.costPrice!) | currency: 'UGX' : 'symbol' : '1.0-0' }} / unit</span>
+          </div>
+        }
+        @if (canViewQuantity()) {
+          <div class="stat-row">
+            <span>Stock</span>
+            <span [class.low-stock]="product.quantity <= product.lowStockThreshold">
+              {{ product.quantity }} units
+            </span>
+          </div>
+          @if (canAdjustStock()) {
+            <button
+              pButton
+              label="Update Stock"
+              icon="pi pi-box"
+              class="p-button-outlined p-button-sm btn-update-stock"
+              (click)="openStockModal()"
+            ></button>
+          }
+        }
+      </div>
+
+      <div class="card">
+        <h3>Organization</h3>
+        <div class="info-item">
+          <span class="label">Brand</span>
+          <p>{{ product.brand?.name || 'N/A' }}</p>
+        </div>
+        <div class="info-item">
+          <span class="label">Category</span>
+          <p>{{ product.category?.name || 'N/A' }}</p>
+        </div>
+      </div>
+
+      <div class="card actions-card">
+        <a [routerLink]="['/products', product.id, 'edit']" class="btn-edit">Edit Product</a>
+        <button
+          pButton
+          label="Delete Product"
+          icon="pi pi-trash"
+          class="p-button-outlined p-button-danger btn-delete"
+          (click)="confirmDelete()"
+          [loading]="isDeleting"
+        ></button>
+      </div>
+    </div>
+  </div>
+  <!-- Stock History -->
+  @if (canViewQuantity()) {
+    <div class="card stock-history-card">
+      <h3>Stock History</h3>
+      <p-table
+        [value]="stockAdjustments"
+        [loading]="isLoadingStockHistory"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="stockHistoryPagination?.total || 0"
+        (onLazyLoad)="onStockHistoryPageChange($event)"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        styleClass="p-datatable-sm"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Change</th>
+            <th>Stock</th>
+            <th>Cost</th>
+            <th>Reference</th>
+            <th>By</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-adj>
+          <tr>
+            <td>{{ adj.createdAt | date: 'medium' }}</td>
+            <td>
+              <p-tag
+                [value]="getAdjustmentTypeLabel(adj.adjustmentType)"
+                [severity]="getAdjustmentTypeSeverity(adj.adjustmentType)"
+              ></p-tag>
+            </td>
+            <td>
+              <span [class.qty-increase]="adj.quantityChange > 0" [class.qty-decrease]="adj.quantityChange < 0">
+                {{ adj.quantityChange > 0 ? '+' : '' }}{{ adj.quantityChange }}
+              </span>
+            </td>
+            <td>{{ adj.previousQuantity }} → {{ adj.newQuantity }}</td>
+            <td>
+              @if (adj.unitCost !== null) {
+                {{ adj.unitCost | currency: 'UGX' : 'symbol' : '1.0-0' }}
+              } @else {
+                —
+              }
+            </td>
+            <td>{{ adj.referenceCode || adj.reason || '—' }}</td>
+            <td>{{ adj.staff ? adj.staff.firstName + ' ' + adj.staff.lastName : '—' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">No stock adjustments recorded yet.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+
+<p-toast></p-toast>
+
+<!-- Update Stock Modal -->
+<p-dialog
+  header="Update Stock"
+  [(visible)]="showStockModal"
+  [modal]="true"
+  [style]="{ width: '400px', maxWidth: '95vw' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="stock-modal-content">
+    <p class="stock-info">
+      Current stock for <strong>{{ product?.name }}</strong
+      >: {{ product?.quantity }} units
+    </p>
+
+    <div class="form-field">
+      <label for="stockQuantity">New Quantity <span class="required">*</span></label>
+      <p-inputNumber
+        id="stockQuantity"
+        [(ngModel)]="stockQuantity"
+        [min]="0"
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        [style]="{ width: '100%' }"
+      ></p-inputNumber>
+    </div>
+
+    <div class="form-field">
+      <label for="stockReason">Reason (optional)</label>
+      <input
+        pInputText
+        id="stockReason"
+        [(ngModel)]="stockReason"
+        placeholder="e.g., Inventory count, New shipment, Damage"
+        [style]="{ width: '100%' }"
+      />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancel" [text]="true" (click)="closeStockModal()"></button>
+    <button
+      pButton
+      label="Update Stock"
+      icon="pi pi-check"
+      (click)="updateStock()"
+      [loading]="isUpdatingStock"
+    ></button>
+  </ng-template>
+</p-dialog>

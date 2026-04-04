@@ -1,0 +1,49 @@
+.site-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--header-height);
+}
+
+// Floating WhatsApp button
+.support-btn {
+  position: fixed;
+  z-index: 100;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-fast);
+}
+
+.support-btn:hover {
+  transform: scale(1.1);
+}
+
+.whatsapp-btn {
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  background: #25d366;
+}
+
+@media (max-width: 768px) {
+  .support-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .whatsapp-btn {
+    bottom: var(--space-md);
+    right: var(--space-md);
+  }
+}

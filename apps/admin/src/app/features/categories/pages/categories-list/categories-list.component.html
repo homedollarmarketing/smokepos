@@ -1,0 +1,69 @@
+<div class="categories-page">
+    <app-page-header title="Categories" subtitle="Manage product categories and organization" [showAddButton]="true"
+        addButtonLabel="Add Category" (addClick)="onCreate()"></app-page-header>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <div class="search-box">
+            <i class="pi pi-search"></i>
+            <input type="text" placeholder="Search categories..." [ngModel]="searchTerm()"
+                (ngModelChange)="onSearchChange($event)" />
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (error()) {
+    <div class="error-banner">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ error() }}</span>
+    </div>
+    }
+
+    <!-- Data Table -->
+    <div class="card">
+        <p-table [value]="categories()" [loading]="isLoading()" selectionMode="single"
+            (onRowSelect)="onRowClick($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-category>
+                <tr [pSelectableRow]="category" class="clickable-row">
+                    <td>
+                        <div class="category-info">
+                            <img [src]="category.image || 'assets/placeholder.png'" [alt]="category.name"
+                                class="category-img" />
+                            <span class="category-name">{{ category.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ category.description || '-' }}</td>
+                    <td>
+                        <p-tag [severity]="category.isActive ? 'success' : 'danger'"
+                            [value]="category.isActive ? 'Active' : 'Inactive'"></p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="3" class="empty-message">
+                        No categories found. Try adjusting your search or add your first category.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button pButton label="Prev" icon="pi pi-chevron-left" class="p-button-outlined p-button-sm"
+                [disabled]="!canGoPrev()" (click)="onPrevPage()"></button>
+            <span class="page-info">
+                Page {{ pagination().page }} of {{ pagination().totalPages }}
+            </span>
+            <button pButton label="Next" icon="pi pi-chevron-right" iconPos="right"
+                class="p-button-outlined p-button-sm" [disabled]="!canGoNext()" (click)="onNextPage()"></button>
+        </div>
+    </div>
+</div>

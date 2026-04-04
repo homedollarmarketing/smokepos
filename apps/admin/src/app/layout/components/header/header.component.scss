@@ -1,0 +1,223 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.header {
+    @include flex-between;
+    height: $header-height;
+    padding: 0 $spacing-lg;
+    background: $header-bg;
+    border-bottom: 1px solid $header-border;
+}
+
+.header-title {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-primary;
+
+    .brand-primary {
+        color: $primary;
+    }
+
+    .brand-accent {
+        color: $secondary;
+    }
+}
+
+.header-actions {
+    @include flex-start;
+    gap: $spacing-lg;
+}
+
+// Branch Switcher
+.branch-switcher {
+    position: relative;
+}
+
+.branch-dropdown {
+    @include flex-center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    border: none;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity $transition-fast;
+
+    &:hover {
+        opacity: 0.9;
+    }
+
+    .pi-chevron-down {
+        font-size: 0.75rem;
+    }
+}
+
+::ng-deep .branch-panel {
+    .p-overlaypanel-content {
+        padding: 0;
+    }
+}
+
+.branch-list {
+    min-width: 200px;
+}
+
+.branch-list-header {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid $surface-border;
+}
+
+.branch-item {
+    @include flex-start;
+    gap: $spacing-sm;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+        background: $gray-50;
+    }
+
+    &.active {
+        background: $gray-100;
+    }
+}
+
+.branch-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.branch-name {
+    flex: 1;
+    text-align: left;
+    font-size: $font-size-sm;
+    color: $text-primary;
+}
+
+.main-badge {
+    font-size: $font-size-xs;
+    padding: 2px 6px;
+    background: $gray-100;
+    color: $text-secondary;
+    border-radius: $border-radius-sm;
+}
+
+.check-icon {
+    color: $success;
+    font-size: 0.875rem;
+}
+
+// User Menu
+.user-menu {
+    @include flex-start;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+    border-radius: $border-radius;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+        background: $gray-50;
+    }
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $primary;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-primary;
+}
+
+.user-email {
+    font-size: $font-size-xs;
+    color: $text-muted;
+}
+
+// User Dropdown
+::ng-deep .user-panel {
+    .p-overlaypanel-content {
+        padding: 0;
+    }
+}
+
+.user-dropdown {
+    min-width: 240px;
+}
+
+.user-dropdown-header {
+    @include flex-start;
+    gap: $spacing-md;
+    padding: $spacing-md;
+}
+
+.dropdown-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: $primary;
+}
+
+.dropdown-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-name {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $text-primary;
+}
+
+.dropdown-email {
+    font-size: $font-size-xs;
+    color: $text-secondary;
+}
+
+.user-dropdown-divider {
+    height: 1px;
+    background: $surface-border;
+}
+
+.dropdown-item {
+    @include flex-start;
+    gap: $spacing-sm;
+    width: 100%;
+    padding: $spacing-md;
+    background: transparent;
+    border: none;
+    font-size: $font-size-sm;
+    color: $text-primary;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+        background: $gray-50;
+    }
+
+    i {
+        color: $text-secondary;
+    }
+}

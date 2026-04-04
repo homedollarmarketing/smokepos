@@ -1,0 +1,379 @@
+<div class="purchase-order-details">
+  @if (isLoading()) {
+    <div class="loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading purchase order...</span>
+    </div>
+  } @else if (purchaseOrder()) {
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="header-left">
+        <button
+          pButton
+          icon="pi pi-arrow-left"
+          [rounded]="true"
+          [text]="true"
+          (click)="onBack()"
+        ></button>
+        <h1>{{ purchaseOrder()?.poNumber }}</h1>
+        <p-tag
+          [value]="(purchaseOrder()?.status | titlecase) ?? ''"
+          [severity]="getStatusSeverity(purchaseOrder()?.status)"
+        ></p-tag>
+      </div>
+
+      <div class="header-actions">
+        <!-- Export PDF - always available -->
+        <button
+          pButton
+          label="Export PDF"
+          icon="pi pi-file-pdf"
+          [outlined]="true"
+          (click)="onExportPdf()"
+          [loading]="isExporting()"
+        ></button>
+
+        @if (canEdit()) {
+          <button
+            pButton
+            label="Edit"
+            icon="pi pi-pencil"
+            [outlined]="true"
+            (click)="onEdit()"
+          ></button>
+        }
+
+        @if (canSubmitForApproval()) {
+          <button
+            pButton
+            label="Submit for Approval"
+            icon="pi pi-send"
+            severity="info"
+            (click)="onSubmitForApproval()"
+            [loading]="isProcessing()"
+          ></button>
+        }
+
+        @if (canApprove()) {
+          <button
+            pButton
+            label="Approve"
+            icon="pi pi-check"
+            severity="success"
+            (click)="onApprove()"
+            [loading]="isProcessing()"
+          ></button>
+          <button
+            pButton
+            label="Reject"
+            icon="pi pi-times"
+            severity="danger"
+            [outlined]="true"
+            (click)="openRejectDialog()"
+          ></button>
+        }
+
+        @if (canCancel()) {
+          <button
+            pButton
+            label="Cancel Order"
+            icon="pi pi-ban"
+            severity="danger"
+            [outlined]="true"
+            (click)="onCancel()"
+          ></button>
+        }
+
+        @if (canReceive()) {
+          <button
+            pButton
+            label="Receive Items"
+            icon="pi pi-box"
+            severity="success"
+            (click)="openReceiveDialog()"
+          ></button>
+        }
+      </div>
+    </div>
+
+    <!-- Rejection Notice -->
+    @if (purchaseOrder()?.status === 'cancelled' && purchaseOrder()?.rejectionReason) {
+      <div class="rejection-notice">
+        <div class="icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="content">
+          <strong>Order Rejected</strong>
+          <p>{{ purchaseOrder()?.rejectionReason }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="icon-wrapper supplier">
+          <i class="pi pi-building"></i>
+        </div>
+        <div class="info">
+          <div class="label">Supplier</div>
+          <div class="value">{{ purchaseOrder()?.supplier?.name }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="icon-wrapper branch">
+          <i class="pi pi-map-marker"></i>
+        </div>
+        <div class="info">
+          <div class="label">Branch</div>
+          <div class="value">{{ purchaseOrder()?.branch?.name }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="icon-wrapper delivery">
+          <i class="pi pi-calendar"></i>
+        </div>
+        <div class="info">
+          <div class="label">Expected Delivery</div>
+          <div class="value">{{ purchaseOrder()?.expectedDeliveryDate | date: 'mediumDate' }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="icon-wrapper total">
+          <i class="pi pi-wallet"></i>
+        </div>
+        <div class="info">
+          <div class="label">Total Amount</div>
+          <div class="value large">{{ formatCurrency(purchaseOrder()?.totalAmount ?? 0) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="details-grid">
+      <div class="detail-card">
+        <h3><i class="pi pi-info-circle"></i> Order Information</h3>
+        <div class="detail-row">
+          <span class="label">Order Number</span>
+          <span class="value">{{ purchaseOrder()?.poNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status</span>
+          <span class="value">
+            <p-tag
+              [value]="getStatusLabel(purchaseOrder()?.status)"
+              [severity]="getStatusSeverity(purchaseOrder()?.status)"
+            ></p-tag>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Created At</span>
+          <span class="value">{{ purchaseOrder()?.createdAt | date: 'medium' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Last Updated</span>
+          <span class="value">{{ purchaseOrder()?.updatedAt | date: 'medium' }}</span>
+        </div>
+        @if (purchaseOrder()?.createdBy) {
+          <div class="detail-row">
+            <span class="label">Created By</span>
+            <span class="value"
+              >{{ purchaseOrder()?.createdBy?.firstName }}
+              {{ purchaseOrder()?.createdBy?.lastName }}</span
+            >
+          </div>
+        }
+      </div>
+
+      <div class="detail-card">
+        <h3><i class="pi pi-history"></i> Approval Info</h3>
+        @if (purchaseOrder()?.approvedAt) {
+          <div class="detail-row">
+            <span class="label">Approved At</span>
+            <span class="value">{{ purchaseOrder()?.approvedAt | date: 'medium' }}</span>
+          </div>
+        }
+        @if (purchaseOrder()?.approvedBy) {
+          <div class="detail-row">
+            <span class="label">Approved By</span>
+            <span class="value"
+              >{{ purchaseOrder()?.approvedBy?.firstName }}
+              {{ purchaseOrder()?.approvedBy?.lastName }}</span
+            >
+          </div>
+        }
+        @if (purchaseOrder()?.rejectionReason) {
+          <div class="detail-row">
+            <span class="label">Rejection Reason</span>
+            <span class="value">{{ purchaseOrder()?.rejectionReason }}</span>
+          </div>
+        }
+        @if (!purchaseOrder()?.approvedAt && !purchaseOrder()?.rejectionReason) {
+          <div class="detail-row">
+            <span class="label">Awaiting approval</span>
+            <span class="value">-</span>
+          </div>
+        }
+      </div>
+
+      @if (purchaseOrder()?.notes) {
+        <div class="detail-card full-width">
+          <h3><i class="pi pi-file-edit"></i> Notes</h3>
+          <p class="notes-text">{{ purchaseOrder()?.notes }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- Items Section -->
+    <div class="items-section">
+      <div class="section-header">
+        <h3><i class="pi pi-list"></i> Order Items</h3>
+        <span class="item-count">{{ purchaseOrder()?.items?.length || 0 }} items</span>
+      </div>
+
+      <p-table [value]="purchaseOrder()?.items || []" [tableStyle]="{ 'min-width': '60rem' }">
+        <ng-template #header>
+          <tr>
+            <th>Product</th>
+            <th style="width: 100px">Ordered</th>
+            <th style="width: 100px">Received</th>
+            <th style="width: 100px">Remaining</th>
+            <th style="width: 120px; text-align: right">Unit Cost</th>
+            <th style="width: 140px; text-align: right">Total</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-item>
+          <tr>
+            <td>
+              <strong>{{ item.productName }}</strong>
+              @if (item.productSku) {
+                <br /><small style="color: #6b7280">SKU: {{ item.productSku }}</small>
+              }
+            </td>
+            <td>
+              <span class="quantity-badge ordered">{{ item.quantity }}</span>
+            </td>
+            <td>
+              <span class="quantity-badge received">{{ item.receivedQuantity || 0 }}</span>
+            </td>
+            <td>
+              @if (item.quantity - (item.receivedQuantity || 0) === 0) {
+                <span class="quantity-badge complete">Complete</span>
+              } @else {
+                <span class="quantity-badge remaining">{{
+                  item.quantity - (item.receivedQuantity || 0)
+                }}</span>
+              }
+            </td>
+            <td style="text-align: right">{{ formatCurrency(item.unitCost) }}</td>
+            <td style="text-align: right">
+              <strong>{{ formatCurrency(item.quantity * item.unitCost) }}</strong>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #footer>
+          <tr>
+            <td colspan="5" class="total-label">Grand Total</td>
+            <td class="total-value">{{ formatCurrency(purchaseOrder()?.totalAmount ?? 0) }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
+
+<!-- Reject Dialog -->
+<p-dialog
+  header="Reject Purchase Order"
+  [(visible)]="showRejectDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+>
+  <div class="dialog-content">
+    <p>Please provide a reason for rejecting this purchase order:</p>
+    <label for="rejectionReason">Rejection Reason</label>
+    <textarea
+      pInputTextarea
+      id="rejectionReason"
+      [(ngModel)]="rejectionReason"
+      rows="4"
+      class="full-width"
+      placeholder="Enter rejection reason..."
+    ></textarea>
+  </div>
+
+  <ng-template #footer>
+    <button pButton label="Cancel" [text]="true" (click)="showRejectDialog.set(false)"></button>
+    <button
+      pButton
+      label="Reject Order"
+      severity="danger"
+      icon="pi pi-times"
+      (click)="onReject()"
+      [loading]="isProcessing()"
+      [disabled]="!rejectionReason.trim()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Receive Items Dialog -->
+<p-dialog
+  header="Receive Items"
+  [(visible)]="showReceiveDialog"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+>
+  <div class="dialog-content">
+    <p>
+      Enter the quantity received for each item. Leave at 0 for items not received in this shipment.
+    </p>
+
+    <table class="receive-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th style="width: 100px">Remaining</th>
+          <th style="width: 120px">Receiving</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of receiveItems; track item.itemId) {
+          <tr>
+            <td>{{ item.productName }}</td>
+            <td>{{ item.remaining }}</td>
+            <td>
+              <p-inputNumber
+                [(ngModel)]="item.quantityReceived"
+                [min]="0"
+                [max]="item.remaining"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                [inputStyle]="{ width: '60px' }"
+              ></p-inputNumber>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #footer>
+    <button pButton label="Cancel" [text]="true" (click)="showReceiveDialog.set(false)"></button>
+    <button
+      pButton
+      label="Confirm Receipt"
+      severity="success"
+      icon="pi pi-check"
+      (click)="onReceiveItems()"
+      [loading]="isProcessing()"
+    ></button>
+  </ng-template>
+</p-dialog>

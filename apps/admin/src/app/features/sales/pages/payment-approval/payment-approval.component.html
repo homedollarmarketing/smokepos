@@ -1,0 +1,120 @@
+<div class="payment-approval-page">
+  <app-page-header
+    title="Payment Approvals"
+    subtitle="Review and approve pending payments"
+  ></app-page-header>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="header-stats" *ngIf="!isEmpty()">
+        <span class="pending-count">
+          <i class="pi pi-clock"></i>
+          {{ pagination().total }} pending
+        </span>
+      </div>
+      <button
+        pButton
+        icon="pi pi-refresh"
+        label="Refresh"
+        class="p-button-outlined p-button-sm"
+        (click)="loadPendingPayments()"
+        [disabled]="isLoading()"
+      ></button>
+    </div>
+
+    @if (isEmpty()) {
+      <div class="empty-message">
+        <div class="empty-icon-wrapper">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="empty-title">All Caught Up!</div>
+        <div class="empty-subtitle">No pending payments require your approval</div>
+      </div>
+    } @else {
+      <p-table [value]="payments()" [loading]="isLoading()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Sale ID</th>
+            <th>Customer</th>
+            <th class="text-right">Amount</th>
+            <th>Method</th>
+            <th>Reference</th>
+            <th>Recorded By</th>
+            <th style="width: 180px">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-payment>
+          <tr>
+            <td>{{ payment.createdAt | date: 'medium' }}</td>
+            <td>
+              <a [routerLink]="['/sales', payment.saleId]" class="sale-link">
+                {{ payment.sale?.saleId || payment.saleId }}
+              </a>
+            </td>
+            <td>{{ payment.sale?.customer?.name || '-' }}</td>
+            <td class="text-right">
+              <span class="amount-value">{{
+                payment.amount | currency: 'UGX' : 'symbol' : '1.0-0'
+              }}</span>
+            </td>
+            <td>
+              <span class="payment-method">
+                <i class="pi pi-wallet"></i>
+                {{ payment.method | titlecase }}
+              </span>
+            </td>
+            <td>
+              <span class="reference-text">{{ payment.reference || '—' }}</span>
+            </td>
+            <td>{{ payment.recordedBy?.firstName }} {{ payment.recordedBy?.lastName }}</td>
+            <td>
+              <div class="action-buttons">
+                <button
+                  pButton
+                  icon="pi pi-check"
+                  label="Approve"
+                  class="p-button-success p-button-sm approve-btn"
+                  (click)="processPayment(payment, 'confirmed')"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-danger p-button-sm p-button-outlined reject-btn"
+                  pTooltip="Reject Payment"
+                  (click)="processPayment(payment, 'denied')"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button
+          pButton
+          label="Prev"
+          icon="pi pi-chevron-left"
+          class="p-button-outlined p-button-sm"
+          [disabled]="!canGoPrev()"
+          (click)="onPrevPage()"
+        ></button>
+        <span class="page-info">
+          Page {{ pagination().page }} of {{ pagination().totalPages }}
+        </span>
+        <button
+          pButton
+          label="Next"
+          icon="pi pi-chevron-right"
+          iconPos="right"
+          class="p-button-outlined p-button-sm"
+          [disabled]="!canGoNext()"
+          (click)="onNextPage()"
+        ></button>
+      </div>
+    }
+  </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

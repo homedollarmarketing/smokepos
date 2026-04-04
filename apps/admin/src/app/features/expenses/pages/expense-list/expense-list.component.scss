@@ -1,0 +1,110 @@
+.expenses-page {
+  padding: 1.5rem;
+
+  .error-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--red-50);
+    color: var(--red-700);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  .filters-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    background: var(--surface-card);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .clickable-row {
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--surface-hover);
+    }
+  }
+
+  .expense-id {
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .expense-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .title {
+      font-weight: 500;
+    }
+
+    .description {
+      font-size: 0.75rem;
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .amount {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  .category {
+    text-transform: capitalize;
+  }
+
+  .date {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+  }
+
+  .created-by {
+    font-size: 0.875rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .empty-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0;
+
+    .pagination-info {
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+    }
+  }
+}

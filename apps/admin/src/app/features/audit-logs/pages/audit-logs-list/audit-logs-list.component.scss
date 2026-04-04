@@ -1,0 +1,121 @@
+.audit-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.filters-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    select {
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        min-width: 150px;
+        background-color: white;
+
+        &:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+    }
+}
+
+.clear-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+
+    &:hover {
+        background: #f1f5f9;
+        color: #ef4444;
+        border-color: #ef4444;
+    }
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.page-info {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.error-banner {
+    background: #fef2f2;
+    color: #ef4444;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid #fee2e2;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-500 {
+    color: #64748b;
+}
+
+.text-gray-400 {
+    color: #94a3b8;
+}
+
+.block {
+    display: block;
+}

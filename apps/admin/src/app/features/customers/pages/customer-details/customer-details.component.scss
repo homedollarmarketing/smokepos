@@ -1,0 +1,319 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.customer-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.back-btn {
+  align-self: flex-start;
+}
+
+.loading {
+  @include flex-center;
+  padding: $spacing-2xl;
+  color: $text-secondary;
+}
+
+.error-banner {
+  @include flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $danger-light;
+  color: $danger;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.card {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+}
+
+// Header
+.customer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $surface-border;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.customer-avatar {
+  width: 64px;
+  height: 64px;
+  background: $gray-100;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  font-size: 1.5rem;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.customer-text {
+  h1 {
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+.customer-tags {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.customer-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+// Custom Tabs
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs-header {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid $surface-border;
+  overflow-x: auto;
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-md $spacing-lg;
+    border: none;
+    background: none;
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: $text-primary;
+      background: $gray-50;
+    }
+
+    &.active {
+      color: $primary;
+      border-bottom-color: $primary;
+    }
+
+    i {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.tabs-content {
+  padding: $spacing-lg;
+}
+
+.tab-panel {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+// Sections
+.section {
+  padding: $spacing-md 0;
+
+  h3 {
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  h3 {
+    margin-bottom: 0;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+}
+
+.info-item {
+  label {
+    display: block;
+    font-size: $font-size-xs;
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  span {
+    font-size: $font-size-sm;
+    color: $text-primary;
+  }
+}
+
+.notes-text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+// Vehicle table
+.vehicle-info {
+  display: flex;
+  flex-direction: column;
+
+  .vehicle-name {
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  .vehicle-color {
+    font-size: $font-size-xs;
+    color: $text-secondary;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+// Empty state
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-2xl;
+  color: $text-secondary;
+  text-align: center;
+
+  i {
+    font-size: 3rem;
+    margin-bottom: $spacing-md;
+    color: $gray-300;
+  }
+
+  p {
+    margin-bottom: $spacing-md;
+  }
+
+  .coming-soon {
+    font-size: $font-size-xs;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: $spacing-xs $spacing-sm;
+    background: $gray-100;
+    border-radius: $border-radius;
+  }
+}
+
+// Loading state
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-2xl;
+  color: $text-secondary;
+  gap: $spacing-sm;
+
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+// Order/Service specific
+.order-id {
+  font-family: monospace;
+  font-weight: 600;
+  color: $primary;
+}
+
+.amount {
+  font-weight: 600;
+  color: $text-primary;
+
+  &.estimate {
+    color: $text-secondary;
+    font-style: italic;
+  }
+}
+
+// Vehicle form
+.vehicle-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  input,
+  p-inputNumber,
+  p-dropdown {
+    width: 100%;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}

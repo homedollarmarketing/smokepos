@@ -1,0 +1,545 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.order-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-2xl;
+  color: $text-secondary;
+}
+
+// Two-column layout
+.order-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: $spacing-lg;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  @media (max-width: 1024px) {
+    order: -1;
+  }
+}
+
+// Status Banner
+.status-banner {
+  @include card;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-left: 4px solid $gray-400;
+
+  &.status-pending {
+    border-left-color: $warning;
+    background: linear-gradient(135deg, $warning-light 0%, $white 100%);
+  }
+
+  &.status-confirmed {
+    border-left-color: $success;
+    background: linear-gradient(135deg, $success-light 0%, $white 100%);
+  }
+
+  &.status-processing {
+    border-left-color: $info;
+    background: linear-gradient(135deg, $info-light 0%, $white 100%);
+  }
+
+  &.status-shipped {
+    border-left-color: $info;
+    background: linear-gradient(135deg, $info-light 0%, $white 100%);
+  }
+
+  &.status-delivered {
+    border-left-color: $success;
+    background: linear-gradient(135deg, $success-light 0%, $white 100%);
+  }
+
+  &.status-cancelled {
+    border-left-color: $danger;
+    background: linear-gradient(135deg, $danger-light 0%, $white 100%);
+  }
+
+  .status-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .status-label {
+      font-size: $font-size-xs;
+      color: $text-secondary;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .status-value {
+      font-size: $font-size-xl;
+      font-weight: 700;
+      color: $text-primary;
+    }
+  }
+
+  .order-meta {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+
+    i {
+      margin-right: $spacing-xs;
+    }
+  }
+}
+
+// Alert
+.alert {
+  @include card;
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+
+  > i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  &.alert-danger {
+    background: $danger-light;
+    border: 1px solid rgba($danger, 0.2);
+
+    > i {
+      color: $danger;
+    }
+  }
+
+  .alert-content {
+    flex: 1;
+
+    strong {
+      display: block;
+      color: $text-primary;
+      margin-bottom: $spacing-xs;
+    }
+
+    p {
+      margin: 0;
+      color: $text-secondary;
+    }
+
+    .alert-meta {
+      display: block;
+      margin-top: $spacing-sm;
+      font-size: $font-size-xs;
+      color: $text-muted;
+    }
+  }
+}
+
+// Action Card
+.action-card {
+  @include card;
+  padding: $spacing-md;
+
+  h3 {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+}
+
+// Section
+.section {
+  @include card;
+  padding: $spacing-lg;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+
+    h3 {
+      margin: 0;
+      font-size: $font-size-base;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      i {
+        color: $text-secondary;
+      }
+    }
+
+    .item-count {
+      font-size: $font-size-sm;
+      color: $text-muted;
+    }
+  }
+}
+
+// Items List
+.items-list {
+  border: 1px solid $surface-border;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  border-bottom: 1px solid $surface-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .item-name {
+      font-weight: 500;
+      color: $text-primary;
+    }
+
+    .item-price {
+      font-size: $font-size-sm;
+      color: $text-secondary;
+    }
+  }
+
+  .item-total {
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.items-summary {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $surface-border;
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacing-xs 0;
+
+    &.total {
+      font-size: $font-size-lg;
+      font-weight: 700;
+    }
+  }
+}
+
+// Payments List
+.payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.payment-item {
+  padding: $spacing-md;
+  background: $gray-50;
+  border-radius: $border-radius;
+  border: 1px solid $surface-border;
+
+  .payment-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    > i {
+      font-size: 1.5rem;
+      color: $text-secondary;
+    }
+
+    .payment-details {
+      display: flex;
+      flex-direction: column;
+
+      .method-name {
+        font-weight: 500;
+        color: $text-primary;
+      }
+
+      .payment-date {
+        font-size: $font-size-sm;
+        color: $text-secondary;
+      }
+    }
+  }
+
+  .payment-amount-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: $spacing-xs;
+
+    .payment-amount {
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+
+  .payment-reference {
+    margin-top: $spacing-sm;
+    padding-top: $spacing-sm;
+    border-top: 1px dashed $surface-border;
+    font-size: $font-size-sm;
+    color: $text-muted;
+  }
+
+  .payment-actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid $surface-border;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $text-muted;
+
+  i {
+    font-size: 2.5rem;
+    margin-bottom: $spacing-sm;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+// Summary Card
+.summary-card {
+  @include card;
+  padding: $spacing-lg;
+
+  h3 {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-base;
+    font-weight: 600;
+  }
+
+  .summary-details {
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: $spacing-sm 0;
+      font-size: $font-size-sm;
+
+      .amount {
+        font-weight: 600;
+
+        &.paid {
+          color: $success;
+        }
+
+        &.has-balance {
+          color: $danger;
+        }
+      }
+    }
+
+    .balance-row {
+      font-size: $font-size-base;
+    }
+
+    .summary-divider {
+      height: 1px;
+      background: $surface-border;
+      margin: $spacing-sm 0;
+    }
+  }
+
+  .paid-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    margin-top: $spacing-md;
+    padding: $spacing-sm;
+    background: $success-light;
+    color: $success;
+    border-radius: $border-radius;
+    font-weight: 600;
+    font-size: $font-size-sm;
+  }
+}
+
+// Info Card
+.info-card {
+  @include card;
+  padding: $spacing-lg;
+
+  h3 {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $text-secondary;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    i {
+      color: $text-muted;
+    }
+  }
+
+  .customer-details {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .customer-name {
+      font-weight: 600;
+      font-size: $font-size-lg;
+      color: $text-primary;
+    }
+
+    .customer-contact {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      color: $text-secondary;
+      text-decoration: none;
+      font-size: $font-size-sm;
+      transition: color $transition-fast;
+
+      &:hover {
+        color: $primary;
+      }
+
+      i {
+        width: 16px;
+        color: $text-muted;
+      }
+    }
+  }
+
+  .address-text,
+  .notes-text {
+    margin: 0;
+    color: $text-primary;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+}
+
+// Dialog Form
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .balance-info {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacing-md;
+    background: $info-light;
+    border-radius: $border-radius;
+    color: $info;
+    font-size: $font-size-sm;
+
+    strong {
+      font-size: $font-size-base;
+    }
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    label {
+      font-size: $font-size-sm;
+      font-weight: 500;
+    }
+
+    .char-count {
+      font-size: $font-size-xs;
+      color: $text-muted;
+
+      &.valid {
+        color: $success;
+      }
+    }
+  }
+
+  .cancel-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background: $warning-light;
+    border-radius: $border-radius;
+    margin: 0;
+
+    i {
+      font-size: 1.5rem;
+      color: $warning;
+      flex-shrink: 0;
+    }
+
+    div {
+      strong {
+        display: block;
+        color: $text-primary;
+        margin-bottom: $spacing-xs;
+      }
+
+      p {
+        margin: 0;
+        color: $text-secondary;
+        font-size: $font-size-sm;
+      }
+    }
+  }
+}
+
+// Utilities
+.w-full {
+  width: 100%;
+}

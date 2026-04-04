@@ -1,0 +1,205 @@
+<div class="report-page">
+  <div class="page-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        (click)="goBack()"
+      ></button>
+      <div class="header-info">
+        <h1>Inventory Report</h1>
+        @if (data(); as reportData) {
+          <p class="subtitle">{{ reportData.branch.name }} • Current Stock</p>
+        }
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        label="Refresh"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [loading]="isLoading()"
+        (click)="loadReport()"
+      ></button>
+      <button
+        pButton
+        label="Export PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [loading]="isExporting()"
+        [disabled]="!data() || isLoading()"
+        (click)="exportPdf()"
+      ></button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p-progressSpinner strokeWidth="4" />
+      <p>Loading inventory data...</p>
+    </div>
+  } @else if (error()) {
+    <p-message severity="error" [text]="error()!" />
+  } @else if (data(); as reportData) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card products">
+        <div class="card-icon">
+          <i class="pi pi-box"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Products</span>
+          <span class="value">{{ reportData.summary.totalProducts }}</span>
+        </div>
+      </div>
+      <div class="summary-card value">
+        <div class="card-icon">
+          <i class="pi pi-dollar"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Stock Value</span>
+          <span class="value">{{ formatCurrency(reportData.summary.totalStockValue) }}</span>
+        </div>
+      </div>
+      <div class="summary-card low-stock">
+        <div class="card-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Low Stock Items</span>
+          <span class="value">{{ reportData.summary.lowStockCount }}</span>
+        </div>
+      </div>
+      <div class="summary-card out-of-stock">
+        <div class="card-icon">
+          <i class="pi pi-times-circle"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Out of Stock</span>
+          <span class="value">{{ reportData.summary.outOfStockCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Stock Alert -->
+    @if (reportData.lowStockProducts.length > 0) {
+      <div class="alert-section">
+        <h3><i class="pi pi-exclamation-triangle"></i> Low Stock Alert</h3>
+        <p-table
+          [value]="reportData.lowStockProducts"
+          [rows]="10"
+          [paginator]="reportData.lowStockProducts.length > 10"
+          styleClass="p-datatable-sm"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th class="text-right">Current Qty</th>
+              <th class="text-right">Threshold</th>
+              <th class="text-right">Price</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product>
+            <tr>
+              <td>
+                <div class="product-info">
+                  <span class="product-name">{{ product.name }}</span>
+                  @if (product.sku) {
+                    <span class="product-sku">{{ product.sku }}</span>
+                  }
+                </div>
+              </td>
+              <td>{{ product.categoryName }}</td>
+              <td class="text-right">
+                <p-tag
+                  [value]="product.quantity.toString()"
+                  [severity]="getStockSeverity(product.quantity, product.lowStockThreshold)"
+                />
+              </td>
+              <td class="text-right">{{ product.lowStockThreshold }}</td>
+              <td class="text-right">{{ formatCurrency(product.price) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-card full-width">
+        <h3>Stock Value by Category</h3>
+        @if (categoryChartData()) {
+          <div class="chart-container">
+            <p-chart type="bar" [data]="categoryChartData()!" [options]="categoryChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No category data available</p>
+        }
+      </div>
+    </div>
+
+    <!-- Stock by Category Table -->
+    <div class="table-section">
+      <h3>Stock by Category</h3>
+      <p-table [value]="reportData.stockByCategory" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Category</th>
+            <th class="text-right">Products</th>
+            <th class="text-right">Total Quantity</th>
+            <th class="text-right">Total Value</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+          <tr>
+            <td>{{ category.categoryName }}</td>
+            <td class="text-right">{{ category.productCount }}</td>
+            <td class="text-right">{{ category.totalQuantity }}</td>
+            <td class="text-right">{{ formatCurrency(category.totalValue) }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-secondary">No inventory data</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Top Value Products -->
+    @if (reportData.topValueProducts.length > 0) {
+      <div class="table-section">
+        <h3>Highest Value Stock</h3>
+        <p-table [value]="reportData.topValueProducts" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Product</th>
+              <th class="text-right">Quantity</th>
+              <th class="text-right">Unit Price</th>
+              <th class="text-right">Stock Value</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product>
+            <tr>
+              <td>
+                <div class="product-info">
+                  <span class="product-name">{{ product.name }}</span>
+                  @if (product.sku) {
+                    <span class="product-sku">{{ product.sku }}</span>
+                  }
+                </div>
+              </td>
+              <td class="text-right">{{ product.quantity }}</td>
+              <td class="text-right">{{ formatCurrency(product.price) }}</td>
+              <td class="text-right font-bold">{{ formatCurrency(product.stockValue) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+  }
+</div>

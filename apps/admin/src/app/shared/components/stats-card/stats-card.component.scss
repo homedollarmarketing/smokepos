@@ -1,0 +1,62 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.stats-card {
+    @include card;
+    @include flex-between;
+    padding: $spacing-lg;
+    min-width: 180px;
+
+    &.highlighted {
+        background: var(--highlight-color);
+        border-color: var(--highlight-color);
+
+        .stats-title,
+        .stats-value,
+        .stats-subtitle {
+            color: $white;
+        }
+
+        .stats-icon {
+            background: rgba($white, 0.2) !important;
+            color: $white !important;
+        }
+    }
+}
+
+.stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+}
+
+.stats-title {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+}
+
+.stats-value {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $text-primary;
+}
+
+.stats-subtitle {
+    font-size: $font-size-xs;
+    color: $success;
+
+    &.negative {
+        color: $danger;
+    }
+}
+
+.stats-icon {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: $border-radius-lg;
+
+    i {
+        font-size: 1.1rem;
+    }
+}

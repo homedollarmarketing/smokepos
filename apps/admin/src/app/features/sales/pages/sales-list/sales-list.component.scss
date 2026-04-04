@@ -1,0 +1,212 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.sales-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Error Banner
+.error-banner {
+  @include flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $danger-light;
+  color: $danger;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+// Search & Filters Bar
+.filters-bar {
+  @include card;
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-sm;
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 280px;
+
+    i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $text-muted;
+      font-size: 0.875rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid $surface-border;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-sm;
+      color: $text-primary;
+      transition: border-color $transition-fast;
+
+      &::placeholder {
+        color: $text-muted;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+      }
+    }
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-left: auto;
+
+    select {
+      padding: 8px 12px;
+      border: 1px solid $surface-border;
+      border-radius: $border-radius-sm;
+      font-size: $font-size-sm;
+      color: $text-primary;
+      background: white;
+      cursor: pointer;
+      min-width: 110px;
+      transition: border-color $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $primary;
+      }
+    }
+
+    .clear-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      color: $danger;
+      font-size: $font-size-sm;
+      cursor: pointer;
+      border-radius: $border-radius-sm;
+      transition: background $transition-fast;
+
+      &:hover {
+        background: $danger-light;
+      }
+    }
+  }
+}
+
+// Table Card
+.card {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $gray-50;
+  }
+}
+
+.empty-message {
+  text-align: center;
+  padding: $spacing-2xl;
+  color: $text-muted;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  .empty-subtitle {
+    font-size: $font-size-sm;
+  }
+}
+
+// Pagination
+.pagination {
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-top: 1px solid $surface-border;
+}
+
+.page-info {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  min-width: 120px;
+  text-align: center;
+}
+
+// Customer cell
+.customer-info {
+  display: flex;
+  flex-direction: column;
+
+  .customer-name {
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  .customer-email {
+    font-size: $font-size-xs;
+    color: $text-secondary;
+  }
+}
+
+// Sale ID styling
+.sale-id {
+  font-weight: 600;
+  color: $primary;
+}
+
+// Source badge
+.source-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: $font-size-xs;
+  font-weight: 500;
+  color: $text-secondary;
+  background: $gray-100;
+  border-radius: $border-radius-sm;
+}
+
+// Balance styling
+.balance {
+  font-weight: 600;
+
+  &.has-balance {
+    color: $danger;
+  }
+
+  &.paid {
+    color: $success;
+  }
+}

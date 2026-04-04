@@ -1,0 +1,43 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <!-- Logo -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-text"><span class="brand-primary">SMOKE</span> <span class="brand-accent">POS</span></span>
+      @if (!collapsed) {
+        <span class="logo-subtitle">Admin Dashboard</span>
+      }
+    </div>
+  </div>
+
+  <!-- Branch Indicator -->
+  @if (!collapsed) {
+    <div class="branch-indicator">
+      <i class="pi pi-building"></i>
+      <span>{{ currentBranchName() }}</span>
+    </div>
+  }
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    @for (item of navItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="nav-item"
+        [title]="collapsed ? item.label : ''"
+      >
+        <i [class]="item.icon"></i>
+        @if (!collapsed) {
+          <span>{{ item.label }}</span>
+          @if (getBadgeCount(item) > 0) {
+            <span class="nav-badge">{{ getBadgeCount(item) }}</span>
+          }
+        } @else {
+          @if (getBadgeCount(item) > 0) {
+            <span class="nav-badge-dot"></span>
+          }
+        }
+      </a>
+    }
+  </nav>
+</aside>

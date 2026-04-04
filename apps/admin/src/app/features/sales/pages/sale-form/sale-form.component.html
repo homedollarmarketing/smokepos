@@ -1,0 +1,607 @@
+<div class="sale-form-page">
+  <app-page-header
+    [title]="isEditMode ? 'Edit Sale' : 'New Sale'"
+    [subtitle]="isEditMode ? 'Update sale details' : 'Create a new sale order'"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <div class="card">
+    <form [formGroup]="saleForm" (ngSubmit)="onSubmit()">
+      <!-- Customer & Branch -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-user"></i>
+          Sale Information
+        </h3>
+
+        <div class="form-group">
+          <label>Customer <span class="required">*</span></label>
+          @if (selectedCustomer()) {
+            <div class="selected-item-display">
+              <div class="selected-item-info">
+                <div class="customer-avatar">
+                  <i class="pi pi-user"></i>
+                </div>
+                <div class="selected-item-details">
+                  <span class="selected-item-name">{{ selectedCustomer()?.name }}</span>
+                  <span class="selected-item-meta"
+                    >{{ selectedCustomer()?.phoneNumber
+                    }}{{ selectedCustomer()?.email ? ' · ' + selectedCustomer()?.email : '' }}</span
+                  >
+                </div>
+              </div>
+              <div class="selected-item-actions">
+                <button
+                  type="button"
+                  pButton
+                  icon="pi pi-pencil"
+                  class="p-button-text p-button-sm"
+                  (click)="openCustomerPicker()"
+                  pTooltip="Change customer"
+                ></button>
+                <button
+                  type="button"
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-text p-button-danger p-button-sm"
+                  (click)="clearCustomer()"
+                  pTooltip="Remove customer"
+                ></button>
+              </div>
+            </div>
+          } @else {
+            <div class="customer-picker-row">
+              <button type="button" class="picker-button" (click)="openCustomerPicker()">
+                <i class="pi pi-search"></i>
+                <span>Select an existing customer...</span>
+              </button>
+              <span class="or-divider">or</span>
+              <button
+                type="button"
+                pButton
+                icon="pi pi-user-plus"
+                label="New Customer"
+                class="p-button-outlined add-customer-btn"
+                (click)="openCreateCustomerModal()"
+              ></button>
+            </div>
+            <div
+              class="error-msg"
+              *ngIf="saleForm.get('customerId')?.invalid && saleForm.get('customerId')?.touched"
+            >
+              Customer is required
+            </div>
+          }
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>Branch</label>
+            <div class="branch-display">
+              <i class="pi pi-building"></i>
+              <span>{{ branchService.currentBranch()?.name || 'Loading...' }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="customerSource">Customer Source <span class="required">*</span></label>
+            <p-select
+              id="customerSource"
+              formControlName="customerSource"
+              [options]="customerSourceOptions"
+              placeholder="Select source"
+              styleClass="w-full"
+            ></p-select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="pi pi-shopping-cart"></i>
+            Order Items
+          </h3>
+          <button
+            type="button"
+            pButton
+            icon="pi pi-plus"
+            label="Add Item"
+            (click)="addItem()"
+            class="p-button-outlined p-button-sm"
+          ></button>
+        </div>
+
+        <div class="items-table">
+          <p-table [value]="items.controls" styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 40%">Product</th>
+                <th style="width: 15%">Quantity</th>
+                <th style="width: 20%">Unit Price</th>
+                <th style="width: 20%">Total</th>
+                <th style="width: 5%"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-group let-i="rowIndex">
+              <tr [formGroup]="group">
+                <td>
+                  @if (getProductName(i)) {
+                    <div class="selected-product-cell">
+                      <span class="product-name">{{ getProductName(i) }}</span>
+                      <button
+                        type="button"
+                        pButton
+                        icon="pi pi-pencil"
+                        class="p-button-text p-button-sm"
+                        (click)="openProductPicker(i)"
+                      ></button>
+                    </div>
+                  } @else {
+                    <button
+                      type="button"
+                      class="picker-button picker-button-sm"
+                      (click)="openProductPicker(i)"
+                    >
+                      <i class="pi pi-search"></i>
+                      <span>Select product...</span>
+                    </button>
+                  }
+                </td>
+                <td>
+                  <p-inputNumber
+                    formControlName="quantity"
+                    [min]="1"
+                    [showButtons]="true"
+                    buttonLayout="horizontal"
+                    inputStyleClass="text-center"
+                  ></p-inputNumber>
+                </td>
+                <td class="price-cell">
+                  {{ group.get('unitPrice')?.value | currency: 'UGX' : 'symbol' : '1.0-0' }}
+                </td>
+                <td class="total-cell">
+                  {{ group.get('total')?.value | currency: 'UGX' : 'symbol' : '1.0-0' }}
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    pButton
+                    icon="pi pi-trash"
+                    class="p-button-danger p-button-text"
+                    (click)="removeItem(i)"
+                  ></button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="empty-items">
+                  <i class="pi pi-inbox"></i>
+                  <span>No items added yet. Click "Add Item" to start.</span>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <!-- Subtotal -->
+        <div class="subtotal-section">
+          <div class="subtotal-row">
+            <span class="subtotal-label">Subtotal:</span>
+            <span class="subtotal-value">
+              {{ calculateSubtotal() | currency: 'UGX' : 'symbol' : '1.0-0' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="error-msg mt-2" *ngIf="items.invalid && items.touched">
+          At least one item is required
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-file-edit"></i>
+          Notes
+        </h3>
+        <div class="form-group">
+          <textarea
+            formControlName="notes"
+            rows="3"
+            placeholder="Add any special instructions or notes..."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Initial Payment Details -->
+      <!-- Initial Payment Details -->
+      <div class="form-section payment-section">
+        <div class="payment-header active">
+          <div class="payment-toggle">
+            <label class="cursor-pointer">
+              <span class="font-semibold">Payment</span>
+            </label>
+          </div>
+          <i class="pi pi-wallet payment-icon"></i>
+        </div>
+
+        <div class="payment-details">
+          <div class="payment-grid">
+            <div class="form-group">
+              <label>Amount Paid</label>
+              <p-inputNumber
+                formControlName="paymentAmount"
+                mode="currency"
+                currency="UGX"
+                locale="en-US"
+                [min]="0"
+                [max]="calculateSubtotal()"
+                styleClass="w-full"
+                inputStyleClass="payment-amount-input"
+              >
+              </p-inputNumber>
+              <div class="amount-actions">
+                <small
+                  class="error-msg"
+                  *ngIf="
+                    saleForm.get('paymentAmount')?.invalid && saleForm.get('paymentAmount')?.touched
+                  "
+                >
+                  Required (Max: {{ calculateSubtotal() | number }})
+                </small>
+                <small
+                  class="full-amount-link"
+                  (click)="saleForm.get('paymentAmount')?.setValue(calculateSubtotal())"
+                >
+                  Set to Full Amount
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Payment Method</label>
+              <p-select
+                formControlName="paymentMethod"
+                [options]="[
+                  { label: 'Cash', value: 'cash' },
+                  { label: 'Mobile Money', value: 'mobile_money' },
+                  { label: 'Bank Transfer', value: 'bank_transfer' },
+                  { label: 'POS', value: 'pos' },
+                ]"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Method"
+                styleClass="w-full"
+              ></p-select>
+            </div>
+
+            <div class="form-group">
+              <label>Reference / Receipt No.</label>
+              <input
+                pInputText
+                formControlName="paymentReference"
+                placeholder="e.g. #12345"
+                class="w-full"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Payment Notes</label>
+              <input
+                pInputText
+                formControlName="paymentNotes"
+                placeholder="Optional details..."
+                class="w-full"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          pButton
+          label="Cancel"
+          class="p-button-outlined"
+          routerLink="/sales"
+        ></button>
+        <button
+          type="submit"
+          pButton
+          [label]="isLoading ? 'Saving...' : 'Save Sale'"
+          [disabled]="saleForm.invalid || isLoading"
+          [loading]="isLoading"
+          icon="pi pi-check"
+        ></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Customer Picker Modal -->
+<p-dialog
+  header="Select Customer"
+  [(visible)]="showCustomerPicker"
+  [modal]="true"
+  [style]="{ width: '600px', maxHeight: '85vh' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="customer-picker-dialog"
+>
+  <div class="picker-modal">
+    <div class="picker-search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="customerSearchTerm"
+        (input)="onCustomerSearchChange()"
+        placeholder="Search by name, email or phone..."
+        autofocus
+      />
+      @if (customerSearchTerm) {
+        <button type="button" class="clear-search-btn" (click)="clearCustomerSearch()">
+          <i class="pi pi-times"></i>
+        </button>
+      }
+    </div>
+
+    <div class="picker-results">
+      @if (customersLoading) {
+        <div class="picker-loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Loading customers...</span>
+        </div>
+      } @else if (filteredCustomers().length === 0) {
+        <div class="picker-empty">
+          <i class="pi pi-users"></i>
+          <span>No customers found</span>
+          <small>Try a different search term or add a new customer</small>
+        </div>
+      } @else {
+        <div class="picker-list">
+          @for (customer of filteredCustomers(); track customer.id) {
+            <div class="picker-item" (click)="selectCustomer(customer)">
+              <div class="picker-item-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="picker-item-info">
+                <span class="picker-item-name">{{ customer.name }}</span>
+                <span class="picker-item-meta">
+                  <i class="pi pi-phone"></i> {{ customer.phoneNumber }}
+                  @if (customer.email) {
+                    <span class="meta-divider">·</span>
+                    <i class="pi pi-envelope"></i> {{ customer.email }}
+                  }
+                </span>
+              </div>
+              <i class="pi pi-chevron-right picker-item-arrow"></i>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="picker-pagination">
+          <button
+            type="button"
+            pButton
+            icon="pi pi-chevron-left"
+            class="p-button-text p-button-sm"
+            [disabled]="!canGoPrevCustomer()"
+            (click)="onPrevCustomerPage()"
+          ></button>
+          <span class="pagination-info">
+            Page {{ customerPagination().page }} of {{ customerPagination().totalPages }}
+            <small>({{ customerPagination().total }} customers)</small>
+          </span>
+          <button
+            type="button"
+            pButton
+            icon="pi pi-chevron-right"
+            class="p-button-text p-button-sm"
+            [disabled]="!canGoNextCustomer()"
+            (click)="onNextCustomerPage()"
+          ></button>
+        </div>
+      }
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Create Customer Modal -->
+<p-dialog
+  header="New Customer"
+  [(visible)]="showCreateCustomerModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="customer-modal"
+>
+  <div class="create-customer-form pt-3">
+    <form [formGroup]="newCustomerForm" (ngSubmit)="saveNewCustomer()">
+      <div class="formgrid grid p-fluid">
+        <!-- Name -->
+        <div class="field col-12">
+          <label class="block mb-2 font-medium"
+            >Full Name <span class="text-red-500">*</span></label
+          >
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <i class="pi pi-user"></i>
+            </p-inputGroupAddon>
+            <input
+              type="text"
+              pInputText
+              formControlName="name"
+              placeholder="e.g. John Doe"
+              autofocus
+            />
+          </p-inputGroup>
+          <small
+            class="text-red-500 block mt-1"
+            *ngIf="newCustomerForm.get('name')?.touched && newCustomerForm.get('name')?.invalid"
+          >
+            Name is required (min 2 chars)
+          </small>
+        </div>
+
+        <!-- Phone -->
+        <div class="field col-12 md:col-6">
+          <label class="block mb-2 font-medium"
+            >Phone Number <span class="text-red-500">*</span></label
+          >
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <i class="pi pi-phone"></i>
+            </p-inputGroupAddon>
+            <input
+              type="text"
+              pInputText
+              formControlName="phoneNumber"
+              placeholder="e.g. +256 700 000000"
+            />
+          </p-inputGroup>
+          <small
+            class="text-red-500 block mt-1"
+            *ngIf="
+              newCustomerForm.get('phoneNumber')?.touched &&
+              newCustomerForm.get('phoneNumber')?.invalid
+            "
+          >
+            Valid phone required
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="field col-12 md:col-6">
+          <label class="block mb-2 font-medium">Email Address</label>
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <i class="pi pi-envelope"></i>
+            </p-inputGroupAddon>
+            <input
+              type="email"
+              pInputText
+              formControlName="email"
+              placeholder="e.g. john@example.com"
+            />
+          </p-inputGroup>
+          <small
+            class="text-red-500 block mt-1"
+            *ngIf="newCustomerForm.get('email')?.touched && newCustomerForm.get('email')?.invalid"
+          >
+            Invalid email format
+          </small>
+        </div>
+
+        <!-- Address -->
+        <div class="field col-12">
+          <label class="block mb-2 font-medium">Address</label>
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <i class="pi pi-map-marker"></i>
+            </p-inputGroupAddon>
+            <input
+              type="text"
+              pInputText
+              formControlName="address"
+              placeholder="Physical address, City, etc."
+            />
+          </p-inputGroup>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end gap-2 mt-5 pt-3 border-top-1 surface-border">
+        <button
+          type="button"
+          pButton
+          label="Cancel"
+          class="p-button-text p-button-secondary"
+          (click)="closeCreateCustomerModal()"
+        ></button>
+        <button
+          type="submit"
+          pButton
+          label="Create Customer"
+          [loading]="isSavingCustomer"
+          [disabled]="newCustomerForm.invalid"
+          icon="pi pi-check"
+        ></button>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+
+<!-- Product Picker Modal -->
+<p-dialog
+  header="Select Product"
+  [(visible)]="showProductPicker"
+  [modal]="true"
+  [style]="{ width: '600px', maxHeight: '80vh' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="picker-modal">
+    <div class="picker-search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="productSearchTerm"
+        (input)="searchProducts()"
+        placeholder="Search by product name or SKU..."
+        autofocus
+      />
+    </div>
+
+    <div class="picker-results">
+      @if (productsLoading) {
+        <div class="picker-loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Loading products...</span>
+        </div>
+      } @else if (filteredProducts().length === 0 && productSearchTerm) {
+        <div class="picker-empty">
+          <i class="pi pi-box"></i>
+          <span>No products found</span>
+        </div>
+      } @else if (filteredProducts().length === 0) {
+        <div class="picker-hint">
+          <i class="pi pi-info-circle"></i>
+          <span>Loading available products...</span>
+        </div>
+      } @else {
+        <div class="picker-list">
+          @for (product of filteredProducts(); track product.id) {
+            <div class="picker-item" (click)="selectProduct(product)">
+              <div class="picker-item-icon product-icon">
+                <i class="pi pi-box"></i>
+              </div>
+              <div class="picker-item-info">
+                <span class="picker-item-name">{{ product.name }}</span>
+                <span class="picker-item-meta"
+                  >{{ product.sku ? 'SKU: ' + product.sku : '' }}
+                  @if (canViewQuantity() && product.sku) {
+                    ·
+                  }
+                  @if (canViewQuantity()) {
+                    Stock: {{ product.quantity }}
+                  }
+                </span>
+              </div>
+              <div class="picker-item-price">
+                {{ product.price | currency: 'UGX' : 'symbol' : '1.0-0' }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>

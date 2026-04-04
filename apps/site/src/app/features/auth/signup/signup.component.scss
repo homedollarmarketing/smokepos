@@ -1,0 +1,24 @@
+// Import shared auth styles
+@use '../auth-styles' as auth;
+
+// Additional signup-specific styles
+.terms-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .checkbox-label {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .link {
+        color: auth.$primary-red;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

@@ -1,0 +1,405 @@
+// Variables matching brand colors
+$primary-red: #E31837;
+$primary-red-dark: #c8152f;
+$white: #ffffff;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $gray-100;
+    padding: 1rem;
+}
+
+.auth-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1000px;
+    width: 100%;
+    background: $white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+    }
+}
+
+// ========== Branding Panel ==========
+.branding-panel {
+    background: $primary-red;
+    color: $white;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (max-width: 768px) {
+        padding: 2rem 1.5rem;
+    }
+}
+
+.branding-content {
+    .logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        margin-bottom: 2rem;
+        border-radius: 50%;
+        background: $white;
+        padding: 8px;
+
+        @media (max-width: 768px) {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 0.75rem;
+        font-style: italic;
+
+        @media (max-width: 768px) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .tagline {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+
+        @media (max-width: 768px) {
+            margin-bottom: 1.5rem;
+        }
+    }
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .check-icon {
+        width: 24px;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+}
+
+// ========== Form Panel ==========
+.form-panel {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (max-width: 768px) {
+        padding: 2rem 1.5rem;
+    }
+}
+
+.form-content {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+// ========== Tabs ==========
+.auth-tabs {
+    display: flex;
+    border: 1px solid $gray-200;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    background: $white;
+    color: $gray-600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+        background: $primary-red;
+        color: $white;
+    }
+
+    &:hover:not(.active) {
+        background: $gray-50;
+    }
+}
+
+// ========== Form Styles ==========
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: $gray-700;
+    }
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        color: $gray-400;
+        pointer-events: none;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.875rem 0.875rem 0.875rem 2.75rem;
+        border: 1px solid $gray-300;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+
+        &::placeholder {
+            color: $gray-400;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $primary-red;
+            box-shadow: 0 0 0 3px rgba($primary-red, 0.1);
+        }
+
+        &.invalid {
+            border-color: $primary-red;
+        }
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        padding: 4px;
+        cursor: pointer;
+        color: $gray-400;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            color: $gray-600;
+        }
+    }
+}
+
+.error-text {
+    font-size: 0.8rem;
+    color: $primary-red;
+}
+
+.error-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: rgba($primary-red, 0.1);
+    border: 1px solid rgba($primary-red, 0.2);
+    border-radius: 8px;
+    color: $primary-red;
+    font-size: 0.875rem;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+// ========== Form Options ==========
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: $gray-600;
+
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: $primary-red;
+    }
+}
+
+.forgot-link {
+    color: $primary-red;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// ========== Submit Button ==========
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: $primary-red;
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    &:hover:not(:disabled) {
+        background: $primary-red-dark;
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba($white, 0.3);
+    border-top-color: $white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ========== OTP Section ==========
+.otp-section {
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        color: $gray-600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        padding: 0;
+        margin-bottom: 1.5rem;
+
+        &:hover {
+            color: $gray-800;
+        }
+    }
+}
+
+.otp-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $gray-800;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+        color: $gray-500;
+    }
+}
+
+.otp-input {
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5rem;
+    border: 1px solid $gray-300;
+    border-radius: 8px;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-red;
+        box-shadow: 0 0 0 3px rgba($primary-red, 0.1);
+    }
+}
+
+// ========== Back to Home ==========
+.back-home-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    color: $gray-500;
+    font-size: 0.875rem;
+    text-decoration: none;
+
+    &:hover {
+        color: $gray-700;
+    }
+}

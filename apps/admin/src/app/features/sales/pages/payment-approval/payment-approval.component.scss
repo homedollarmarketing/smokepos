@@ -1,0 +1,184 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.payment-approval-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+}
+
+.card-header {
+  @include flex-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $surface-border;
+  background: $gray-50;
+
+  .header-stats {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .pending-count {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-md;
+      background: $warning-light;
+      color: $warning;
+      border-radius: $border-radius;
+      font-weight: 600;
+      font-size: $font-size-sm;
+
+      i {
+        font-size: $font-size-base;
+      }
+    }
+  }
+}
+
+.empty-message {
+  text-align: center;
+  padding: $spacing-2xl;
+
+  .empty-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto $spacing-md;
+    background: $success-light;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: 2.5rem;
+      color: $success;
+    }
+  }
+
+  .empty-title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  .empty-subtitle {
+    color: $text-secondary;
+    font-size: $font-size-base;
+  }
+}
+
+// Table styling
+.amount-value {
+  font-weight: 700;
+  color: $text-primary;
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-method {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: 2px $spacing-sm;
+  background: $gray-100;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-sm;
+
+  i {
+    color: $text-secondary;
+    font-size: $font-size-xs;
+  }
+}
+
+.reference-text {
+  font-family: monospace;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+// Action buttons
+.action-buttons {
+  display: flex;
+  gap: $spacing-xs;
+
+  .approve-btn {
+    flex: 1;
+    justify-content: center;
+
+    &:deep(.p-button-label) {
+      font-weight: 600;
+    }
+  }
+
+  .reject-btn {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+// Pagination
+.pagination {
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-top: 1px solid $surface-border;
+  background: $gray-50;
+}
+
+.page-info {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  min-width: 120px;
+  text-align: center;
+}
+
+// Sale link styling
+.sale-link {
+  font-weight: 600;
+  color: $primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Table overrides
+:host ::ng-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background: $white;
+      font-weight: 600;
+      color: $text-secondary;
+      font-size: $font-size-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      padding: $spacing-sm $spacing-md;
+      border-bottom: 2px solid $gray-200;
+    }
+
+    .p-datatable-tbody > tr > td {
+      padding: $spacing-md;
+      vertical-align: middle;
+      border-bottom: 1px solid $gray-100;
+    }
+
+    .p-datatable-tbody > tr:hover {
+      background: $gray-50;
+    }
+
+    .p-datatable-tbody > tr:last-child > td {
+      border-bottom: none;
+    }
+  }
+}

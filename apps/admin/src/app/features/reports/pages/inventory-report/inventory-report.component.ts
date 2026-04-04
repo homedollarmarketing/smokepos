@@ -1,0 +1,161 @@
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { ChartModule } from 'primeng/chart';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageModule } from 'primeng/message';
+import { TagModule } from 'primeng/tag';
+
+import { ReportsService } from '../../services/reports.service';
+import { BranchService } from '../../../../core/services/branch.service';
+import { InventoryReportData } from '../../models/report.model';
+
+@Component({
+  selector: 'app-inventory-report',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ChartModule,
+    CardModule,
+    ButtonModule,
+    TableModule,
+    ProgressSpinnerModule,
+    MessageModule,
+    TagModule,
+  ],
+  templateUrl: './inventory-report.component.html',
+  styleUrl: './inventory-report.component.scss',
+})
+export class InventoryReportComponent implements OnInit, OnDestroy {
+  private readonly router = inject(Router);
+  private readonly reportsService = inject(ReportsService);
+  private readonly branchService = inject(BranchService);
+
+  readonly isLoading = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly data = signal<InventoryReportData | null>(null);
+  readonly isExporting = signal(false);
+
+  // Effect to reload report when branch changes
+  private readonly branchEffect = effect(() => {
+    const branchId = this.branchService.currentBranchId();
+    if (branchId) {
+      this.loadReport();
+    }
+  });
+
+  // Bar chart for stock by category
+  readonly categoryChartData = computed(() => {
+    const reportData = this.data();
+    if (!reportData || reportData.stockByCategory.length === 0) return null;
+
+    const topCategories = reportData.stockByCategory.slice(0, 10);
+    return {
+      labels: topCategories.map((c) => c.categoryName),
+      datasets: [
+        {
+          label: 'Stock Value',
+          data: topCategories.map((c) => c.totalValue),
+          backgroundColor: '#3b82f6',
+        },
+      ],
+    };
+  });
+
+  readonly categoryChartOptions = {
+    indexAxis: 'y' as const,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value: number) => this.formatCurrencyShort(value),
+        },
+      },
+    },
+  };
+
+  ngOnInit(): void {
+    // Effect handles initial load when branch is available
+  }
+
+  ngOnDestroy(): void {
+    this.branchEffect.destroy();
+  }
+
+  loadReport(): void {
+    const branchId = this.branchService.currentBranchId();
+    if (!branchId) {
+      this.error.set('No branch selected');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.reportsService.getInventoryReport(branchId).subscribe({
+      next: (data) => {
+        this.data.set(data);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message || 'Failed to load report');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  exportPdf(): void {
+    const branchId = this.branchService.currentBranchId();
+    if (!branchId) return;
+
+    this.isExporting.set(true);
+
+    this.reportsService.downloadInventoryReportPdf(branchId).subscribe({
+      next: (blob) => {
+        this.reportsService.downloadFile(
+          blob,
+          `inventory-report-${new Date().toISOString().split('T')[0]}.pdf`
+        );
+        this.isExporting.set(false);
+      },
+      error: () => {
+        this.isExporting.set(false);
+      },
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/reports']);
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-UG', {
+      style: 'currency',
+      currency: 'UGX',
+      minimumFractionDigits: 0,
+    }).format(value);
+  }
+
+  private formatCurrencyShort(value: number): string {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `${(value / 1000).toFixed(0)}K`;
+    }
+    return value.toString();
+  }
+
+  getStockSeverity(quantity: number, threshold: number): 'danger' | 'warn' | 'success' {
+    if (quantity === 0) return 'danger';
+    if (quantity <= threshold) return 'warn';
+    return 'success';
+  }
+}

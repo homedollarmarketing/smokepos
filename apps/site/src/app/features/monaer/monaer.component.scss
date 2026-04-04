@@ -1,0 +1,401 @@
+// Hero Section
+.monaer-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 450px;
+    max-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('/images/monaer-hero-image.jpeg') center center / cover no-repeat;
+    background-color: #0a1628;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 188, 212, 0.15) 0%, rgba(10, 22, 40, 0.85) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--space-lg);
+    max-width: 800px;
+}
+
+.monaer-logo {
+    width: 180px;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: var(--space-lg);
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: var(--space-sm);
+}
+
+.text-cyan {
+    color: var(--color-accent);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+.hero-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-lg);
+}
+
+.hero-ctas {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: #0a1628;
+
+    &:hover {
+        background: #00a8b5;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// About Section
+.about-monaer {
+    padding: var(--space-2xl) 0;
+    background: white;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+}
+
+.about-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: var(--space-md);
+}
+
+.about-content p {
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+}
+
+.stats-row {
+    display: flex;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid #eee;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-accent);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+// Carousels
+.about-carousel,
+.why-carousel {
+    position: relative;
+}
+
+.carousel-container {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    aspect-ratio: 4/3;
+
+    img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+
+        &.active {
+            opacity: 1;
+        }
+    }
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: var(--space-md);
+
+    button {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: none;
+        background: #ccc;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+
+        &:hover {
+            background: #999;
+        }
+
+        &.active {
+            background: var(--color-accent);
+        }
+    }
+}
+
+// Features Section
+.features-section {
+    padding: var(--space-2xl) 0;
+    background: #f8f9fa;
+
+    h2 {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: var(--space-xl);
+    }
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+.feature-card {
+    background: white;
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-md);
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+}
+
+.feature-card h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: var(--space-sm);
+}
+
+.feature-card p {
+    color: #666;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+// Why Choose Section
+.why-choose-section {
+    padding: var(--space-2xl) 0;
+    background: white;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: center;
+}
+
+.why-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: var(--space-md);
+}
+
+.why-content p {
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: var(--space-lg);
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-lg);
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        color: #333;
+        font-weight: 500;
+
+        svg {
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+    }
+}
+
+// CTA Section
+.cta-section {
+    padding: var(--space-2xl) 0;
+    background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 100%);
+    text-align: center;
+
+    h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: var(--space-sm);
+    }
+
+    p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: var(--space-lg);
+    }
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-whatsapp {
+    background: #25d366;
+    color: white;
+
+    &:hover {
+        background: #20bd5a;
+    }
+}
+
+.btn-call {
+    background: var(--color-primary);
+    color: white;
+
+    &:hover {
+        background: #c62828;
+    }
+}
+
+// Responsive
+@media (max-width: 992px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .monaer-hero {
+        height: 50vh;
+        min-height: 400px;
+    }
+
+    .monaer-logo {
+        width: 140px;
+    }
+
+    .about-grid,
+    .why-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+
+    .why-carousel {
+        order: -1;
+    }
+
+    .stats-row {
+        flex-wrap: wrap;
+        gap: var(--space-md);
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+}

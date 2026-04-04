@@ -1,0 +1,198 @@
+.expense-details-page {
+  padding: 1.5rem;
+
+  .error-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--red-50);
+    color: var(--red-700);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: var(--text-color-secondary);
+  }
+
+  .details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--surface-card);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .expense-id-status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .expense-id {
+        font-family: monospace;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-color-secondary);
+        font-weight: 500;
+      }
+
+      .value {
+        font-size: 1rem;
+        color: var(--text-color);
+
+        &.amount {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--primary-color);
+        }
+
+        &.tagged-staff {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: var(--primary-color);
+          font-weight: 500;
+
+          i {
+            font-size: 0.875rem;
+          }
+        }
+
+        &.rejection-reason {
+          background: var(--red-50);
+          color: var(--red-700);
+          padding: 0.75rem;
+          border-radius: 4px;
+          border-left: 3px solid var(--red-500);
+        }
+      }
+    }
+  }
+
+  .receipt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .review-card {
+    border-left: 3px solid var(--primary-color);
+  }
+}
+
+// Review Dialog
+.review-dialog-content {
+  .review-options {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+
+    .review-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-weight: 500;
+
+        &.approve-label {
+          color: var(--green-600);
+        }
+
+        &.reject-label {
+          color: var(--red-600);
+        }
+      }
+    }
+  }
+
+  .rejection-reason-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 500;
+
+      .required {
+        color: var(--red-500);
+      }
+    }
+
+    textarea {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,699 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.sale-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  @include card;
+  padding: $spacing-xl;
+}
+
+.form-section {
+  margin-bottom: $spacing-xl;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: $font-size-lg;
+    font-weight: 600;
+    margin-bottom: $spacing-lg;
+    color: $primary;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $surface-border;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .section-header {
+    @include flex-between;
+    margin-bottom: $spacing-md;
+
+    .section-title {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  @include form-group;
+  margin-bottom: $spacing-md;
+
+  label {
+    font-weight: 500;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+
+    .required {
+      color: $danger;
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $surface-border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    color: $text-primary;
+    width: 100%;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+    }
+
+    &:disabled {
+      background: $gray-50;
+      color: $text-secondary;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .field-hint {
+    display: block;
+    font-size: $font-size-sm;
+    color: $text-muted;
+    margin-top: $spacing-xs;
+  }
+
+  .error-msg {
+    font-size: $font-size-sm;
+    color: $danger;
+    margin-top: $spacing-xs;
+  }
+}
+
+// Picker Button (for customer/product selection)
+.picker-button {
+  @include flex-start;
+  gap: $spacing-sm;
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: 1px dashed $surface-border;
+  border-radius: $border-radius;
+  background: $gray-50;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $primary;
+    background: white;
+    color: $text-primary;
+  }
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &.picker-button-sm {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+// Customer picker row
+.customer-picker-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  .or-divider {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    font-weight: 500;
+  }
+
+  .add-customer-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .or-divider {
+      text-align: center;
+    }
+
+    .picker-button,
+    .add-customer-btn {
+      width: 100%;
+    }
+  }
+}
+
+// Customer avatar
+.customer-avatar {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $primary-light;
+  color: $primary;
+  flex-shrink: 0;
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// Selected item display (customer/product)
+.selected-item-display {
+  @include flex-between;
+  padding: $spacing-sm $spacing-md;
+  background: $gray-50;
+  border: 1px solid $surface-border;
+  border-radius: $border-radius;
+
+  .selected-item-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    > i {
+      font-size: 1.25rem;
+      color: $primary;
+    }
+  }
+
+  .selected-item-details {
+    display: flex;
+    flex-direction: column;
+
+    .selected-item-name {
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    .selected-item-meta {
+      font-size: $font-size-xs;
+      color: $text-secondary;
+    }
+  }
+
+  .selected-item-actions {
+    display: flex;
+    gap: $spacing-xs;
+  }
+}
+
+// Branch display
+.branch-display {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: $gray-50;
+  border: 1px solid $surface-border;
+  border-radius: $border-radius;
+  color: $text-secondary;
+
+  i {
+    color: $text-muted;
+  }
+}
+
+// Items table
+.items-table {
+  border: 1px solid $surface-border;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+
+.selected-product-cell {
+  @include flex-between;
+
+  .product-name {
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+.price-cell,
+.total-cell {
+  text-align: right;
+  font-weight: 500;
+}
+
+.total-cell {
+  font-weight: 700;
+  color: $primary;
+}
+
+.empty-items {
+  text-align: center;
+  padding: $spacing-xl !important;
+  color: $text-muted;
+
+  i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: $spacing-sm;
+    opacity: 0.5;
+  }
+}
+
+// Subtotal section
+.subtotal-section {
+  padding: $spacing-md;
+  background: $gray-50;
+  border-top: 1px solid $surface-border;
+
+  .subtotal-row {
+    @include flex-end;
+    gap: $spacing-lg;
+
+    .subtotal-label {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $text-secondary;
+    }
+
+    .subtotal-value {
+      font-size: $font-size-xl;
+      font-weight: 700;
+      color: $primary;
+    }
+  }
+}
+
+// Form actions
+.form-actions {
+  @include flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $surface-border;
+}
+
+// Picker Modal Styles
+.picker-modal {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-top: $spacing-sm;
+}
+
+.picker-search {
+  position: relative;
+
+  > i:first-child {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: $spacing-sm 40px $spacing-sm 40px;
+    border: 1px solid $surface-border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+    }
+  }
+
+  .clear-search-btn {
+    position: absolute;
+    right: $spacing-sm;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    color: $text-muted;
+    border-radius: 50%;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $gray-100;
+      color: $text-primary;
+    }
+  }
+}
+
+.picker-results {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.picker-loading,
+.picker-empty,
+.picker-hint {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-xl;
+  color: $text-muted;
+  text-align: center;
+
+  i {
+    font-size: 2rem;
+    opacity: 0.5;
+  }
+
+  small {
+    font-size: $font-size-xs;
+    opacity: 0.8;
+  }
+}
+
+.picker-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  cursor: pointer;
+  border-bottom: 1px solid $gray-100;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $gray-50;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .picker-item-icon {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $primary-light;
+    color: $primary;
+
+    &.product-icon {
+      background: $info-light;
+      color: $info;
+    }
+  }
+
+  .picker-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .picker-item-name {
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    .picker-item-meta {
+      font-size: $font-size-xs;
+      color: $text-secondary;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+
+      i {
+        font-size: 0.7rem;
+      }
+
+      .meta-divider {
+        margin: 0 2px;
+      }
+    }
+  }
+
+  .picker-item-price {
+    font-weight: 700;
+    color: $primary;
+  }
+
+  .picker-item-arrow {
+    color: $text-muted;
+    font-size: 0.8rem;
+  }
+}
+
+// Picker Pagination
+.picker-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-top: 1px solid $surface-border;
+  background: $gray-50;
+
+  .pagination-info {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    text-align: center;
+
+    small {
+      display: block;
+      font-size: $font-size-xs;
+      color: $text-muted;
+    }
+  }
+}
+
+// Table styling override
+:host ::ng-deep .p-datatable {
+  .p-datatable-header {
+    background: transparent;
+    border: none;
+    padding: 0 0 $spacing-md 0;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: $gray-100;
+    color: $text-secondary;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: $spacing-sm $spacing-md;
+    vertical-align: middle;
+  }
+}
+
+// PrimeNG overrides for clean inputs
+:host ::ng-deep {
+  .p-inputnumber {
+    width: 100%;
+
+    .p-inputnumber-input {
+      width: 100%;
+      padding: $spacing-xs $spacing-sm;
+      text-align: center;
+    }
+
+    &.w-full {
+      display: flex;
+    }
+  }
+
+  // Payment amount input styling
+  .payment-amount-input {
+    text-align: left !important;
+    padding: $spacing-sm $spacing-md !important;
+    font-size: $font-size-base !important;
+    font-weight: 600;
+  }
+
+  .p-dialog-content {
+    padding: $spacing-md !important;
+  }
+
+  // Fix p-select height consistency
+  .p-select {
+    width: 100%;
+  }
+}
+
+// Initial Payment Section Styling
+.payment-section {
+  background: white;
+  border: 1px solid $surface-border;
+  border-radius: $border-radius;
+  padding: 0;
+  overflow: hidden;
+  transition: all $transition-fast;
+
+  &.active {
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba($primary, 0.05);
+  }
+
+  .payment-header {
+    padding: $spacing-md $spacing-lg;
+    background: $gray-50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    transition: all $transition-fast;
+
+    &.active {
+      background: $primary-light;
+      border-bottom-color: rgba($primary, 0.1);
+
+      .payment-toggle label .text-secondary {
+        color: $primary !important;
+        opacity: 0.8;
+      }
+
+      .payment-icon {
+        color: $primary;
+        opacity: 1;
+      }
+    }
+
+    .payment-toggle {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+
+      label {
+        cursor: pointer;
+        user-select: none;
+
+        .text-secondary {
+          font-weight: 400;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .payment-icon {
+      font-size: 1.5rem;
+      color: $text-muted;
+      opacity: 0.5;
+      transition: all $transition-fast;
+    }
+  }
+
+  .payment-details {
+    padding: $spacing-lg;
+    background: white;
+    animation: slideDown 0.3s ease-in-out;
+  }
+}
+
+// Payment grid layout
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md $spacing-lg;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Amount actions row
+.amount-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-xs;
+
+  .full-amount-link {
+    color: $text-secondary;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $primary;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Customer Modal Styling
+::ng-deep .customer-modal {
+  .p-inputgroup-addon {
+    background: white;
+    border-color: $surface-border;
+    color: $text-secondary;
+    min-width: 2.75rem;
+
+    i {
+      color: $primary;
+    }
+  }
+
+  .p-inputtext {
+    border-left: none;
+
+    &:focus {
+      z-index: 1;
+    }
+  }
+
+  // Ensure addon border matches input focus color
+  .p-inputgroup:focus-within .p-inputgroup-addon {
+    border-color: $primary;
+    border-right-color: transparent;
+  }
+}

@@ -1,0 +1,167 @@
+<div class="report-page">
+  <div class="page-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        (click)="goBack()"
+      ></button>
+      <div class="header-info">
+        <h1>Expense Report</h1>
+        @if (data(); as reportData) {
+          <p class="subtitle">{{ reportData.branch.name }}</p>
+        }
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        label="Export PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [loading]="isExporting()"
+        [disabled]="!data() || isLoading()"
+        (click)="exportPdf()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <app-date-range-picker (rangeChange)="onDateRangeChange($event)" />
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p-progressSpinner strokeWidth="4" />
+      <p>Loading report data...</p>
+    </div>
+  } @else if (error()) {
+    <p-message severity="error" [text]="error()!" />
+  } @else if (data(); as reportData) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card approved">
+        <div class="card-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Approved Expenses</span>
+          <span class="value">{{ formatCurrency(reportData.summary.approvedExpenses) }}</span>
+        </div>
+      </div>
+      <div class="summary-card pending">
+        <div class="card-icon">
+          <i class="pi pi-clock"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Pending</span>
+          <span class="value">{{ formatCurrency(reportData.summary.pendingExpenses) }}</span>
+        </div>
+      </div>
+      <div class="summary-card rejected">
+        <div class="card-icon">
+          <i class="pi pi-times-circle"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Rejected</span>
+          <span class="value">{{ formatCurrency(reportData.summary.rejectedExpenses) }}</span>
+        </div>
+      </div>
+      <div class="summary-card count">
+        <div class="card-icon">
+          <i class="pi pi-file"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Count</span>
+          <span class="value">{{ reportData.summary.expenseCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-card category-chart">
+        <h3>Expenses by Category</h3>
+        @if (categoryChartData()) {
+          <div class="chart-container">
+            <p-chart
+              type="doughnut"
+              [data]="categoryChartData()!"
+              [options]="categoryChartOptions"
+            />
+          </div>
+        } @else {
+          <p class="no-data">No category data available</p>
+        }
+      </div>
+
+      <div class="chart-card">
+        <h3>Expense Trend</h3>
+        @if (trendChartData()) {
+          <div class="chart-container">
+            <p-chart type="line" [data]="trendChartData()!" [options]="trendChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No trend data available</p>
+        }
+      </div>
+    </div>
+
+    <!-- Category Breakdown Table -->
+    <div class="table-section">
+      <h3>Category Breakdown</h3>
+      <p-table [value]="reportData.byCategory" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Category</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">Count</th>
+            <th class="text-right">Percentage</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+          <tr>
+            <td>{{ formatCategoryName(category.category) }}</td>
+            <td class="text-right">{{ formatCurrency(category.amount) }}</td>
+            <td class="text-right">{{ category.count }}</td>
+            <td class="text-right">{{ category.percentage | number: '1.1-1' }}%</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-secondary">No expense data for this period</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Top Expenses Table -->
+    @if (reportData.topExpenses.length > 0) {
+      <div class="table-section">
+        <h3>Top Expenses</h3>
+        <p-table [value]="reportData.topExpenses" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th class="text-right">Amount</th>
+              <th>Date</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-expense>
+            <tr>
+              <td>{{ expense.title }}</td>
+              <td>
+                <p-tag [value]="formatCategoryName(expense.category)" severity="info" />
+              </td>
+              <td class="text-right">{{ formatCurrency(expense.amount) }}</td>
+              <td>{{ expense.expenseDate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,89 @@
+<div class="supplier-form">
+  <div class="page-header">
+    <h1>{{ isEditMode() ? 'Edit Supplier' : 'Add Supplier' }}</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="name">Name *</label>
+          <input pInputText id="name" formControlName="name" placeholder="Supplier name" />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <small class="p-error">Name is required</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="contactPerson">Contact Person</label>
+          <input
+            pInputText
+            id="contactPerson"
+            formControlName="contactPerson"
+            placeholder="Contact person name"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            type="email"
+            placeholder="email@example.com"
+          />
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <small class="p-error">Please enter a valid email</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="phone">Phone</label>
+          <input pInputText id="phone" formControlName="phone" placeholder="+254 700 000 000" />
+        </div>
+
+        <div class="form-field full-width">
+          <label for="address">Address</label>
+          <textarea
+            pTextarea
+            id="address"
+            formControlName="address"
+            rows="3"
+            placeholder="Supplier address"
+          ></textarea>
+        </div>
+
+        @if (isEditMode()) {
+          <div class="form-field">
+            <label for="isActive">Active Status</label>
+            <p-toggleSwitch formControlName="isActive"></p-toggleSwitch>
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          class="p-button-outlined"
+          (click)="onCancel()"
+        ></button>
+        <button
+          pButton
+          type="submit"
+          [label]="isEditMode() ? 'Update' : 'Create'"
+          [loading]="isSaving()"
+        ></button>
+      </div>
+    </form>
+  }
+</div>
+
+<p-toast></p-toast>

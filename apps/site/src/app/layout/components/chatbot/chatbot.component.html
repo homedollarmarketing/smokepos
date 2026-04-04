@@ -1,0 +1,165 @@
+<!-- Closed State - Floating Button -->
+@if (!isOpen()) {
+  <button (click)="openChat()" class="chat-toggle-btn" aria-label="Open chat support">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  </button>
+}
+
+<!-- Minimized State -->
+@if (isOpen() && isMinimized()) {
+  <button (click)="restoreChat()" class="chat-minimized-btn">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+    <span class="minimized-text">Chat Support</span>
+    <span class="notification-badge">1</span>
+  </button>
+}
+
+<!-- Open Chat Window -->
+@if (isOpen() && !isMinimized()) {
+  <div class="chat-window">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </div>
+        <div class="chat-title">
+          <span class="chat-name">Mr. P Support</span>
+          <span class="chat-status">Online • Typically replies instantly</span>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button (click)="minimizeChat()" class="header-action-btn" aria-label="Minimize chat">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+        <button (click)="closeChat()" class="header-action-btn" aria-label="Close chat">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages">
+      @for (message of messages(); track message.id) {
+        <div
+          class="message-wrapper"
+          [class.user-message]="message.sender === 'user'"
+          [class.bot-message]="message.sender === 'bot'"
+        >
+          <div class="message-bubble">
+            <p class="message-text">{{ message.text }}</p>
+            <span class="message-time">{{ message.timestamp }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Quick Replies -->
+    @if (showQuickReplies()) {
+      <div class="quick-replies">
+        <p class="quick-replies-label">Quick replies:</p>
+        <div class="quick-replies-list">
+          @for (reply of quickReplies; track reply) {
+            <button (click)="sendMessage(reply)" class="quick-reply-btn">
+              {{ reply }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Input -->
+    <div class="chat-input">
+      <input
+        type="text"
+        [value]="inputMessage()"
+        (input)="onInputChange($any($event.target).value)"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type your message..."
+        class="message-input"
+      />
+      <button
+        (click)="sendMessage()"
+        [disabled]="!inputMessage().trim()"
+        class="send-btn"
+        aria-label="Send message"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+      </button>
+    </div>
+  </div>
+}

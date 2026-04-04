@@ -1,0 +1,229 @@
+<div class="expense-details-page">
+  <app-page-header
+    title="Expense Details"
+    subtitle="View expense information and manage approval"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <span>Loading expense...</span>
+    </div>
+  } @else if (expense()) {
+    <div class="details-container">
+      <!-- Main Info Card -->
+      <div class="card main-card">
+        <div class="card-header">
+          <div class="expense-id-status">
+            <span class="expense-id">{{ expense()!.expenseId }}</span>
+            <p-tag
+              [severity]="getStatusSeverity(expense()!.status)"
+              [value]="getStatusLabel(expense()!.status)"
+            ></p-tag>
+          </div>
+          <div class="actions">
+            @if (canModify() && canEdit()) {
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                label="Edit"
+                class="p-button-outlined"
+                (click)="onEdit()"
+              ></button>
+            }
+            @if (canModify() && canDelete()) {
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                label="Delete"
+                class="p-button-outlined p-button-danger"
+                (click)="onDelete()"
+              ></button>
+            }
+            @if (canReview()) {
+              <button
+                pButton
+                type="button"
+                icon="pi pi-check-circle"
+                label="Review"
+                class="p-button-success"
+                (click)="openReviewDialog()"
+              ></button>
+            }
+          </div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <label>Title</label>
+            <span class="value">{{ expense()!.title }}</span>
+          </div>
+
+          <div class="detail-item">
+            <label>Amount</label>
+            <span class="value amount">{{
+              expense()!.amount | currency: 'UGX ' : 'symbol' : '1.0'
+            }}</span>
+          </div>
+
+          <div class="detail-item">
+            <label>Category</label>
+            <span class="value">{{ getCategoryLabel(expense()!.category) }}</span>
+          </div>
+
+          <div class="detail-item">
+            <label>Expense Date</label>
+            <span class="value">{{ expense()!.expenseDate | date: 'mediumDate' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <label>Branch</label>
+            <span class="value">{{ expense()!.branch?.name || 'N/A' }}</span>
+          </div>
+
+          <div class="detail-item">
+            <label>Created By</label>
+            <span class="value">{{ getCreatedByName() }}</span>
+          </div>
+
+          @if (expense()!.staff) {
+            <div class="detail-item">
+              <label>Tagged Employee</label>
+              <span class="value tagged-staff">
+                <i class="pi pi-user"></i>
+                {{ getTaggedStaffName() }}
+              </span>
+            </div>
+          }
+
+          <div class="detail-item">
+            <label>Created At</label>
+            <span class="value">{{ expense()!.createdAt | date: 'medium' }}</span>
+          </div>
+
+          @if (expense()!.description) {
+            <div class="detail-item full-width">
+              <label>Description</label>
+              <span class="value">{{ expense()!.description }}</span>
+            </div>
+          }
+
+          @if (expense()!.receiptUrl) {
+            <div class="detail-item full-width">
+              <label>Receipt</label>
+              <a [href]="expense()!.receiptUrl" target="_blank" class="receipt-link">
+                <i class="pi pi-file"></i> View Receipt
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Review Info Card (if reviewed) -->
+      @if (expense()!.status !== 'pending') {
+        <div class="card review-card">
+          <h3>Review Information</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Reviewed By</label>
+              <span class="value">{{ getReviewedByName() }}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Reviewed At</label>
+              <span class="value">{{ expense()!.reviewedAt | date: 'medium' }}</span>
+            </div>
+
+            @if (expense()!.rejectionReason) {
+              <div class="detail-item full-width">
+                <label>Rejection Reason</label>
+                <span class="value rejection-reason">{{ expense()!.rejectionReason }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Review Dialog -->
+<p-dialog
+  header="Review Expense"
+  [(visible)]="showReviewDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="!isReviewing()"
+>
+  <div class="review-dialog-content">
+    <div class="review-options">
+      <div class="review-option">
+        <p-radioButton
+          name="reviewStatus"
+          [value]="ExpenseStatus.APPROVED"
+          [(ngModel)]="reviewStatus"
+          inputId="approve"
+        ></p-radioButton>
+        <label for="approve" class="approve-label">
+          <i class="pi pi-check-circle"></i> Approve
+        </label>
+      </div>
+      <div class="review-option">
+        <p-radioButton
+          name="reviewStatus"
+          [value]="ExpenseStatus.REJECTED"
+          [(ngModel)]="reviewStatus"
+          inputId="reject"
+        ></p-radioButton>
+        <label for="reject" class="reject-label"> <i class="pi pi-times-circle"></i> Reject </label>
+      </div>
+    </div>
+
+    @if (reviewStatus() === ExpenseStatus.REJECTED) {
+      <div class="rejection-reason-field">
+        <label for="rejectionReason">Reason for Rejection <span class="required">*</span></label>
+        <textarea
+          pInputTextarea
+          id="rejectionReason"
+          [(ngModel)]="rejectionReason"
+          rows="3"
+          placeholder="Please provide a reason for rejection"
+        ></textarea>
+      </div>
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      class="p-button-text"
+      (click)="closeReviewDialog()"
+      [disabled]="isReviewing()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      [label]="reviewStatus() === ExpenseStatus.APPROVED ? 'Approve' : 'Reject'"
+      [class]="reviewStatus() === ExpenseStatus.APPROVED ? 'p-button-success' : 'p-button-danger'"
+      (click)="onReviewSubmit()"
+      [loading]="isReviewing()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

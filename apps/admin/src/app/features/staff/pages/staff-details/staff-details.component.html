@@ -1,0 +1,111 @@
+<div class="staff-details-page">
+    <!-- Back Button -->
+    <button pButton label="Back to Staff List" icon="pi pi-arrow-left" class="p-button-text back-btn"
+        (click)="onBack()"></button>
+
+    @if (isLoading()) {
+    <div class="loading">Loading...</div>
+    } @else if (error()) {
+    <div class="error-banner">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ error() }}</span>
+    </div>
+    } @else if (staff()) {
+    <div class="card">
+        <!-- Header -->
+        <div class="staff-header">
+            <div class="staff-info">
+                <div class="staff-avatar">
+                    @if (staff()!.photoUrl) {
+                    <img [src]="staff()!.photoUrl" [alt]="staff()!.firstName">
+                    } @else {
+                    <i class="pi pi-user"></i>
+                    }
+                </div>
+                <div class="staff-text">
+                    <h1>{{ staff()!.firstName }} {{ staff()!.lastName }}</h1>
+                    <p-tag [severity]="staff()!.user.isActive ? 'success' : 'danger'"
+                        [value]="staff()!.user.isActive ? 'Active' : 'Inactive'"></p-tag>
+                </div>
+            </div>
+            <div class="staff-actions">
+                <button pButton label="Edit" icon="pi pi-pencil" class="p-button-outlined" (click)="onEdit()"></button>
+                <button pButton label="Delete" icon="pi pi-trash" class="p-button-danger p-button-outlined"
+                    (click)="onDelete()"></button>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="section">
+            <h3>Contact Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Email Address</label>
+                    <span>{{ staff()!.user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone Number</label>
+                    <span>{{ staff()!.primaryPhoneNumber || 'Not provided' }}</span>
+                </div>
+                @if (staff()!.secondaryPhoneNumber) {
+                <div class="info-item">
+                    <label>Secondary Phone</label>
+                    <span>{{ staff()!.secondaryPhoneNumber }}</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Assignments -->
+        <div class="section">
+            <h3>Assignments</h3>
+            <div class="info-grid horizontal">
+                <div class="info-item">
+                    <label>Roles</label>
+                    <div class="tags-list">
+                        @for (role of staff()!.roles; track role.id) {
+                        <p-tag [value]="role.name" severity="info"></p-tag>
+                        }
+                        @if (!staff()!.roles.length) {
+                        <span class="text-muted">No roles assigned</span>
+                        }
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Branches</label>
+                    <div class="tags-list">
+                        @for (branch of staff()!.assignedBranches; track branch.id) {
+                        <p-tag [value]="branch.name" severity="warn"></p-tag>
+                        }
+                        @if (!staff()!.assignedBranches.length) {
+                        <span class="text-muted">No branches assigned</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions -->
+        <div class="section">
+            <h3>Permissions</h3>
+            <div class="permissions-grid">
+                @for (entity of permissionEntities(); track entity) {
+                <div class="permission-group">
+                    <label>{{ entity | titlecase }}</label>
+                    <div class="tags-list">
+                        @for (perm of groupedPermissions()[entity]; track perm) {
+                        <p-tag [value]="perm" severity="secondary"></p-tag>
+                        }
+                    </div>
+                </div>
+                }
+                @if (permissionEntities().length === 0) {
+                <span class="text-muted">No permissions found</span>
+                }
+            </div>
+        </div>
+    </div>
+    }
+
+    <p-confirmDialog></p-confirmDialog>
+</div>

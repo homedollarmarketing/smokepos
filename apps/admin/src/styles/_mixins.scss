@@ -1,0 +1,137 @@
+// ====================================
+// SCSS Mixins
+// ====================================
+
+@use 'variables' as *;
+
+// Flexbox
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-start {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@mixin flex-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+// Cards
+@mixin card {
+    background: $surface-card;
+    border-radius: $border-radius;
+    box-shadow: $shadow-sm;
+    border: 1px solid $surface-border;
+}
+
+@mixin card-hover {
+    transition: box-shadow $transition-base, transform $transition-base;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+}
+
+// Text Truncate
+@mixin text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Buttons
+@mixin button-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    font-weight: 500;
+    border-radius: $border-radius;
+    transition: all $transition-fast;
+    cursor: pointer;
+    border: none;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+@mixin button-primary {
+    @include button-base;
+    background: $primary;
+    color: $white;
+
+    &:hover:not(:disabled) {
+        background: $primary-dark;
+    }
+}
+
+@mixin button-secondary {
+    @include button-base;
+    background: $secondary;
+    color: $white;
+
+    &:hover:not(:disabled) {
+        background: $secondary-dark;
+    }
+}
+
+@mixin button-outline {
+    @include button-base;
+    background: transparent;
+    border: 1px solid $surface-border;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+        background: $gray-50;
+        border-color: $gray-300;
+    }
+}
+
+// Scrollbar
+@mixin custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $gray-300;
+        border-radius: 3px;
+
+        &:hover {
+            background: $gray-400;
+        }
+    }
+}
+// Forms
+@mixin form-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    label {
+        font-weight: 500;
+        font-size: $font-size-sm;
+        color: $text-primary;
+    }
+}

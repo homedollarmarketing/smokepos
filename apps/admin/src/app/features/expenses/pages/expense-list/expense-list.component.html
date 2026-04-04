@@ -1,0 +1,133 @@
+<div class="expenses-page">
+  <app-page-header
+    title="Expenses"
+    subtitle="Manage branch expenses and approvals"
+    [showAddButton]="canCreate()"
+    addButtonLabel="Add Expense"
+    (addClick)="onCreate()"
+  ></app-page-header>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <p-select
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      (onChange)="onFilterChange()"
+      placeholder="Filter by Status"
+      [style]="{ minWidth: '150px' }"
+    >
+    </p-select>
+
+    <p-select
+      [options]="categoryOptions"
+      [(ngModel)]="selectedCategory"
+      (onChange)="onFilterChange()"
+      placeholder="Filter by Category"
+      [style]="{ minWidth: '180px' }"
+    >
+    </p-select>
+  </div>
+
+  <!-- Data Table -->
+  <div class="card">
+    <p-table
+      [value]="expenses()"
+      [loading]="isLoading()"
+      selectionMode="single"
+      (onRowSelect)="onRowClick($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Expense ID</th>
+          <th>Title</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Created By</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-expense>
+        <tr [pSelectableRow]="expense" class="clickable-row">
+          <td>
+            <span class="expense-id">{{ expense.expenseId }}</span>
+          </td>
+          <td>
+            <div class="expense-title">
+              <span class="title">{{ expense.title }}</span>
+              @if (expense.description) {
+                <span class="description"
+                  >{{ expense.description | slice: 0 : 50
+                  }}{{ expense.description.length > 50 ? '...' : '' }}</span
+                >
+              }
+            </div>
+          </td>
+          <td>
+            <span class="amount">{{ expense.amount | currency: 'UGX ' : 'symbol' : '1.0' }}</span>
+          </td>
+          <td>
+            <span class="category">{{ getCategoryLabel(expense.category) }}</span>
+          </td>
+          <td>
+            <span class="date">{{ expense.expenseDate | date: 'mediumDate' }}</span>
+          </td>
+          <td>
+            <span class="created-by">{{ getCreatedByName(expense) }}</span>
+          </td>
+          <td>
+            <p-tag
+              [severity]="getStatusSeverity(expense.status)"
+              [value]="getStatusLabel(expense.status)"
+            ></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="empty-message">
+            <i class="pi pi-inbox"></i>
+            <span>No expenses found</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Pagination -->
+    @if (pagination().totalPages > 1) {
+      <div class="pagination-controls">
+        <button
+          pButton
+          label="Prev"
+          icon="pi pi-chevron-left"
+          [disabled]="!canGoPrev()"
+          (click)="onPrevPage()"
+          class="p-button-text"
+        ></button>
+        <span class="pagination-info"
+          >{{ pagination().page }} of {{ pagination().totalPages }}</span
+        >
+        <button
+          pButton
+          label="Next"
+          icon="pi pi-chevron-right"
+          iconPos="right"
+          [disabled]="!canGoNext()"
+          (click)="onNextPage()"
+          class="p-button-text"
+        ></button>
+      </div>
+    }
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

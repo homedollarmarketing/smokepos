@@ -1,0 +1,77 @@
+<div class="role-form-page">
+    <!-- Back Button -->
+    <button pButton label="Cancel" icon="pi pi-arrow-left" class="p-button-text back-btn" (click)="onCancel()"></button>
+
+    <div class="card">
+        <h1>{{ isEditMode() ? 'Edit Role' : 'Create Role' }}</h1>
+
+        @if (error()) {
+        <div class="error-banner">
+            <i class="pi pi-exclamation-circle"></i>
+            <span>{{ error() }}</span>
+        </div>
+        }
+
+        @if (isLoading()) {
+        <div class="loading">Loading...</div>
+        } @else {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="name">Name *</label>
+                <input id="name" type="text" pInputText formControlName="name" (blur)="generateSlug()" />
+                @if (form.get('name')?.touched && form.get('name')?.errors?.['required']) {
+                <small class="error">Name is required</small>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input id="slug" type="text" pInputText formControlName="slug" />
+                <small class="hint">Lowercase letters, numbers and hyphens only</small>
+                @if (form.get('slug')?.touched && form.get('slug')?.errors?.['required']) {
+                <small class="error">Slug is required</small>
+                }
+                @if (form.get('slug')?.touched && form.get('slug')?.errors?.['pattern']) {
+                <small class="error">Invalid slug format</small>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" pInputTextarea formControlName="description" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Permissions</label>
+                <div class="permissions-container">
+                    @for (group of groupedPermissions() | keyvalue; track group.key) {
+                    <div class="permission-group">
+                        <h4>{{ group.key | titlecase }}</h4>
+                        <div class="permissions-grid">
+                            @for (permission of group.value; track permission) {
+                            <div class="permission-item">
+                                <div class="flex align-items-center gap-sm">
+                                    <p-checkbox [binary]="true" [inputId]="permission"
+                                        [ngModel]="isPermissionSelected(permission)"
+                                        (ngModelChange)="togglePermission(permission, $event)"
+                                        [ngModelOptions]="{standalone: true}">
+                                    </p-checkbox>
+                                    <label [for]="permission" class="ml-4 cursor-pointer">{{ permission }}</label>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button pButton type="button" label="Cancel" class="p-button-outlined" (click)="onCancel()"></button>
+                <button pButton type="submit" [label]="isEditMode() ? 'Update Role' : 'Create Role'"
+                    [loading]="isSaving()" [disabled]="form.invalid"></button>
+            </div>
+        </form>
+        }
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<section class="verify-page">
+    <div class="verify-container">
+        <div class="verify-content">
+            <!-- Icon -->
+            <div class="icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+            </div>
+
+            <h1>Verify Your Email</h1>
+            <p class="subtitle">
+                We've sent a 6-digit verification code to<br>
+                <strong>{{ email() }}</strong>
+            </p>
+
+            <!-- Success Message -->
+            @if (successMessage()) {
+            <div class="success-alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                {{ successMessage() }}
+            </div>
+            }
+
+            <!-- Error Message -->
+            @if (errorMessage()) {
+            <div class="error-alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {{ errorMessage() }}
+            </div>
+            }
+
+            <!-- OTP Form -->
+            <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="verify-form">
+                <div class="form-group">
+                    <label for="otp">Verification Code</label>
+                    <input type="text" id="otp" formControlName="otp" placeholder="000000" maxlength="6"
+                        inputmode="numeric" autocomplete="one-time-code" class="otp-input"
+                        [class.invalid]="otp?.invalid && otp?.touched">
+                    @if (otp?.invalid && otp?.touched) {
+                    <span class="error-text">Please enter a valid 6-digit code</span>
+                    }
+                </div>
+
+                <button type="submit" class="btn-submit" [disabled]="isLoading()">
+                    @if (isLoading()) {
+                    <span class="spinner"></span>
+                    Verifying...
+                    } @else {
+                    Verify Email
+                    }
+                </button>
+            </form>
+
+            <!-- Resend Section -->
+            <div class="resend-section">
+                <p>Didn't receive the code?</p>
+                @if (resendCooldown() > 0) {
+                <span class="cooldown">Resend in {{ resendCooldown() }}s</span>
+                } @else {
+                <button class="resend-btn" (click)="resendOtp()" [disabled]="isResending()">
+                    @if (isResending()) {
+                    Sending...
+                    } @else {
+                    Resend Code
+                    }
+                </button>
+                }
+            </div>
+
+            <!-- Back Links -->
+            <div class="back-links">
+                <a routerLink="/auth/signup" class="link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Signup
+                </a>
+                <a routerLink="/" class="link">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</section>

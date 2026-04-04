@@ -1,0 +1,219 @@
+<div class="booking-details-container">
+  <p-toast />
+  <p-confirmDialog />
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        [text]="true"
+        severity="secondary"
+        (click)="goBack()"
+      ></button>
+      <div class="header-content">
+        <h1>Booking Details</h1>
+        @if (booking()) {
+          <p-tag
+            [value]="getStatusLabel(booking()!.status)"
+            [severity]="getStatusSeverity(booking()!.status)"
+          />
+        }
+      </div>
+    </div>
+    @if (booking()) {
+      <div class="header-actions">
+        @if (canEdit()) {
+          <button
+            pButton
+            label="Edit"
+            icon="pi pi-pencil"
+            [outlined]="true"
+            (click)="editBooking()"
+          ></button>
+        }
+        @if (canDelete()) {
+          <button
+            pButton
+            label="Delete"
+            icon="pi pi-trash"
+            severity="danger"
+            [outlined]="true"
+            (click)="deleteBooking()"
+          ></button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p>Loading booking details...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-container">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ error() }}</p>
+      <button pButton label="Go Back" (click)="goBack()"></button>
+    </div>
+  }
+
+  @if (booking() && !isLoading()) {
+    <div class="details-content">
+      <!-- Quick Status Update -->
+      @if (canEdit()) {
+        <div class="status-update-card">
+          <label>Update Status:</label>
+          <p-select
+            [options]="statusOptions"
+            [ngModel]="booking()!.status"
+            (onChange)="onStatusChange($event.value)"
+            [disabled]="isUpdatingStatus()"
+            placeholder="Select status"
+          />
+        </div>
+      }
+
+      <div class="details-grid">
+        <!-- Customer Info -->
+        <div class="detail-card">
+          <h3><i class="pi pi-user"></i> Customer</h3>
+          <div class="detail-content">
+            <div class="detail-row">
+              <span class="label">Name</span>
+              <span class="value">{{ getCustomerName() }}</span>
+            </div>
+            @if (booking()!.customer?.phoneNumber) {
+              <div class="detail-row">
+                <span class="label">Phone</span>
+                <span class="value">{{ booking()!.customer!.phoneNumber }}</span>
+              </div>
+            }
+            @if (booking()!.customer?.email) {
+              <div class="detail-row">
+                <span class="label">Email</span>
+                <span class="value">{{ booking()!.customer!.email }}</span>
+              </div>
+            }
+            @if (booking()!.customer?.address) {
+              <div class="detail-row">
+                <span class="label">Address</span>
+                <span class="value">{{ booking()!.customer!.address }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Vehicle Info -->
+        <div class="detail-card">
+          <h3><i class="pi pi-car"></i> Vehicle</h3>
+          <div class="detail-content">
+            <div class="detail-row">
+              <span class="label">Vehicle</span>
+              <span class="value">{{ getVehicleInfo() }}</span>
+            </div>
+            @if (booking()!.vehicle?.numberPlate) {
+              <div class="detail-row">
+                <span class="label">Number Plate</span>
+                <span class="value">{{ booking()!.vehicle!.numberPlate }}</span>
+              </div>
+            }
+            @if (booking()!.vehicle?.color) {
+              <div class="detail-row">
+                <span class="label">Color</span>
+                <span class="value">{{ booking()!.vehicle!.color }}</span>
+              </div>
+            }
+            @if (booking()!.vehicle?.vinNumber) {
+              <div class="detail-row">
+                <span class="label">VIN</span>
+                <span class="value">{{ booking()!.vehicle!.vinNumber }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Service Info -->
+        <div class="detail-card">
+          <h3><i class="pi pi-wrench"></i> Service Details</h3>
+          <div class="detail-content">
+            <div class="detail-row">
+              <span class="label">Service Type</span>
+              <span class="value">{{ getServiceTypeLabel(booking()!.serviceType) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Preferred Date</span>
+              <span class="value">{{ formatDate(booking()!.preferredDate) }}</span>
+            </div>
+            @if (booking()!.preferredTime) {
+              <div class="detail-row">
+                <span class="label">Preferred Time</span>
+                <span class="value">{{ booking()!.preferredTime }}</span>
+              </div>
+            }
+            @if (booking()!.confirmedDate) {
+              <div class="detail-row">
+                <span class="label">Confirmed Date</span>
+                <span class="value">{{ formatDate(booking()!.confirmedDate) }}</span>
+              </div>
+            }
+            @if (booking()!.confirmedTime) {
+              <div class="detail-row">
+                <span class="label">Confirmed Time</span>
+                <span class="value">{{ booking()!.confirmedTime }}</span>
+              </div>
+            }
+            @if (booking()!.completedAt) {
+              <div class="detail-row">
+                <span class="label">Completed At</span>
+                <span class="value">{{ formatDateTime(booking()!.completedAt) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="detail-card">
+          <h3><i class="pi pi-money-bill"></i> Pricing</h3>
+          <div class="detail-content">
+            <div class="detail-row">
+              <span class="label">Estimated Cost</span>
+              <span class="value">{{ formatCurrency(booking()!.estimatedCost) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Actual Cost</span>
+              <span class="value highlight">{{ formatCurrency(booking()!.actualCost) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Section -->
+      <div class="notes-section">
+        @if (booking()!.serviceNotes) {
+          <div class="note-card">
+            <h4>Service Notes (from Customer)</h4>
+            <p>{{ booking()!.serviceNotes }}</p>
+          </div>
+        }
+
+        @if (booking()!.adminNotes) {
+          <div class="note-card admin-note">
+            <h4><i class="pi pi-lock"></i> Admin Notes (Internal)</h4>
+            <p>{{ booking()!.adminNotes }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Timestamps -->
+      <div class="timestamps">
+        <span>Created: {{ formatDateTime(booking()!.createdAt) }}</span>
+        <span>Last Updated: {{ formatDateTime(booking()!.updatedAt) }}</span>
+      </div>
+    </div>
+  }
+</div>

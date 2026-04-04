@@ -1,0 +1,147 @@
+<div class="sales-list-page">
+  <app-page-header
+    title="Sales Management"
+    subtitle="Manage sales orders, payments, and fulfillment"
+    [showAddButton]="authService.hasPermission('sale.create')"
+    addButtonLabel="New Sale"
+    (addClick)="onCreate()"
+  ></app-page-header>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <!-- Search Input -->
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search by Sale ID..."
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+      />
+    </div>
+
+    <div class="filter-group">
+      <select
+        [ngModel]="selectedStatus"
+        (ngModelChange)="selectedStatus = $event; onFilterChange()"
+      >
+        <option [ngValue]="undefined">All Status</option>
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <p-datepicker
+        [(ngModel)]="selectedDateRange"
+        selectionMode="range"
+        placeholder="Date Range"
+        (onClose)="onFilterChange()"
+        [readonlyInput]="true"
+        styleClass="w-full sm:w-15rem"
+        appendTo="body"
+      ></p-datepicker>
+
+      @if (hasActiveFilters()) {
+        <button class="clear-btn" (click)="clearFilters()">
+          <i class="pi pi-times"></i> Clear
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="card">
+    <p-table
+      [value]="sales()"
+      [loading]="isLoading()"
+      styleClass="p-datatable-sm"
+      selectionMode="single"
+      (onRowSelect)="onRowClick($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Sale ID</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Source</th>
+          <th>Branch</th>
+          <th>Status</th>
+          <th class="text-right">Total</th>
+          <th class="text-right">Balance</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-sale>
+        <tr [pSelectableRow]="sale" class="clickable-row">
+          <td>
+            <span class="sale-id">{{ sale.saleId }}</span>
+          </td>
+          <td>{{ sale.createdAt | date: 'mediumDate' }}</td>
+          <td>
+            <div class="customer-info">
+              <span class="customer-name">{{ sale.customer?.name || 'Walk-in' }}</span>
+              <span class="customer-email">{{ sale.customer?.email }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="source-badge">{{ getSourceLabel(sale.customerSource) }}</span>
+          </td>
+          <td>{{ sale.branch?.name }}</td>
+          <td>
+            <p-tag [value]="sale.status | titlecase" [severity]="getSeverity(sale.status)"></p-tag>
+          </td>
+          <td class="text-right font-bold">
+            {{ sale.totalAmount | currency: 'UGX' : 'symbol' : '1.0-0' }}
+          </td>
+          <td class="text-right">
+            <span
+              class="balance"
+              [class.has-balance]="sale.balance > 0"
+              [class.paid]="sale.balance === 0"
+            >
+              {{ sale.balance | currency: 'UGX' : 'symbol' : '1.0-0' }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="empty-message">
+            <i class="pi pi-shopping-cart empty-icon"></i>
+            <div class="empty-title">No sales found</div>
+            <div class="empty-subtitle">Create a new sale to get started.</div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button
+        pButton
+        label="Prev"
+        icon="pi pi-chevron-left"
+        class="p-button-outlined p-button-sm"
+        [disabled]="!canGoPrev()"
+        (click)="onPrevPage()"
+      ></button>
+      <span class="page-info"> Page {{ pagination().page }} of {{ pagination().totalPages }} </span>
+      <button
+        pButton
+        label="Next"
+        icon="pi pi-chevron-right"
+        iconPos="right"
+        class="p-button-outlined p-button-sm"
+        [disabled]="!canGoNext()"
+        (click)="onNextPage()"
+      ></button>
+    </div>
+  </div>
+</div>

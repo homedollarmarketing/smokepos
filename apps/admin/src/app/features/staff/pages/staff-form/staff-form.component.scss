@@ -1,0 +1,155 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.staff-form-page {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    align-self: flex-start;
+}
+
+.card {
+    @include card;
+    padding: $spacing-xl;
+
+    h1 {
+        margin-top: 0;
+        margin-bottom: $spacing-xl;
+        font-size: $font-size-2xl;
+        border-bottom: 1px solid $surface-border;
+        padding-bottom: $spacing-md;
+    }
+}
+
+.form-section {
+    margin-bottom: $spacing-xl;
+
+    h3 {
+        font-size: $font-size-base;
+        font-weight: 600;
+        color: $primary;
+        margin-bottom: $spacing-md;
+    }
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    @include form-group;
+    margin-bottom: $spacing-md;
+
+    &.checkbox-group {
+        flex-direction: row;
+        align-items: center;
+        gap: $spacing-md;
+
+        label {
+            margin-bottom: 0;
+        }
+    }
+}
+
+// Fix for PrimeNG Password width
+::ng-deep .p-password {
+    width: 100%;
+
+    .p-password-input {
+        width: 100%;
+    }
+}
+
+// Photo Upload Styles
+.photo-upload-group {
+    .photo-container {
+        display: flex;
+        align-items: center;
+        gap: $spacing-lg;
+        padding: $spacing-md;
+        background: $gray-50;
+        border-radius: $border-radius;
+        border: 1px dashed $surface-border;
+    }
+
+    .photo-preview {
+        width: 100px;
+        height: 100px;
+        flex-shrink: 0; // Prevent shrinking
+        border-radius: 50%;
+        background-color: $surface-card;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 2px solid $surface-border;
+        transition: all 0.2s ease;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+        &.has-photo {
+            border-color: $primary;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        i {
+            font-size: 3rem;
+            color: $text-secondary;
+            opacity: 0.5;
+        }
+    }
+
+    .photo-actions {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        align-items: flex-start;
+
+        .upload-hint {
+            font-size: $font-size-xs;
+            color: $text-secondary;
+            margin-top: $spacing-xs;
+        }
+    }
+}
+
+.hint {
+    color: $text-secondary;
+    font-size: $font-size-xs;
+    margin-top: 4px;
+}
+
+.error-banner {
+    @include flex-start;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background: $danger-light;
+    color: $danger;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-lg;
+}
+
+.form-actions {
+    @include flex-end;
+    gap: $spacing-md;
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $surface-border;
+}

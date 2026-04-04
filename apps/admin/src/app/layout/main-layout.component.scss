@@ -1,0 +1,27 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-container {
+    flex: 1;
+    margin-left: $sidebar-width;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left $transition-base;
+}
+
+.sidebar-collapsed .main-container {
+    margin-left: $sidebar-collapsed-width;
+}
+
+.main-content {
+    flex: 1;
+    padding: $spacing-lg;
+    background: $surface-ground;
+    overflow-y: auto;
+    @include custom-scrollbar;
+}

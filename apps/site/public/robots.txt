@@ -1,0 +1,24 @@
+# Robots.txt for Mr. P Authentic Autoparts
+# https://mrpauthenticautoparts.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://mrpauthenticautoparts.com/sitemap.xml
+
+# Block admin areas (if any)
+Disallow: /admin/
+Disallow: /api/
+
+# Block login/account pages from indexing
+Disallow: /account/orders/
+Disallow: /account/settings/
+
+# Allow search engines to crawl all public pages
+Allow: /
+Allow: /store/
+Allow: /services/
+Allow: /about/
+Allow: /contact/
+Allow: /blog/

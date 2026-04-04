@@ -1,0 +1,243 @@
+<div class="purchase-order-form">
+  <div class="page-header">
+    <h1>{{ isEditMode() ? 'Edit Purchase Order' : 'New Purchase Order' }}</h1>
+    @if (!canEdit() && isEditMode()) {
+      <span class="readonly-notice"
+        >This purchase order cannot be edited in its current status</span
+      >
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading...</span>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+      <div class="form-section">
+        <h3>Order Details</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="supplierId">Supplier *</label>
+            <p-select
+              id="supplierId"
+              formControlName="supplierId"
+              [options]="suppliers()"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Search and select a supplier"
+              [filter]="true"
+              filterBy="name"
+              [loading]="isLoadingSuppliers()"
+              (onFilter)="onSupplierSearch($event)"
+              [showClear]="true"
+            ></p-select>
+            @if (form.get('supplierId')?.invalid && form.get('supplierId')?.touched) {
+              <small class="p-error">Supplier is required</small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="expectedDeliveryDate">Expected Delivery Date</label>
+            <p-datepicker
+              id="expectedDeliveryDate"
+              formControlName="expectedDeliveryDate"
+              dateFormat="yy-mm-dd"
+              [showIcon]="true"
+              placeholder="Select date"
+            ></p-datepicker>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="notes">Notes</label>
+            <textarea
+              pTextarea
+              id="notes"
+              formControlName="notes"
+              rows="2"
+              placeholder="Additional notes"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-header">
+          <h3>Order Items</h3>
+          @if (canEdit()) {
+            <button
+              pButton
+              type="button"
+              label="Add Item"
+              icon="pi pi-plus"
+              class="p-button-outlined p-button-sm"
+              (click)="addItem()"
+            ></button>
+          }
+        </div>
+
+        @if (itemsFormArray.length === 0) {
+          <div class="empty-items">
+            <p>No items added yet. Click "Add Item" to add products to this order.</p>
+          </div>
+        } @else {
+          <div class="items-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Unit Cost</th>
+                  <th>Total</th>
+                  @if (canEdit()) {
+                    <th></th>
+                  }
+                </tr>
+              </thead>
+              <tbody formArrayName="items">
+                @for (item of itemsFormArray.controls; track $index) {
+                  <tr [formGroupName]="$index">
+                    <td class="product-cell">
+                      <div
+                        class="product-selector"
+                        (click)="canEdit() && openProductSelector($index)"
+                      >
+                        @if (getProductName($index)) {
+                          <span class="product-name">{{ getProductName($index) }}</span>
+                        } @else {
+                          <span class="placeholder">Select product...</span>
+                        }
+                        @if (canEdit()) {
+                          <i class="pi pi-chevron-down"></i>
+                        }
+                      </div>
+                    </td>
+                    <td class="quantity-cell">
+                      <p-inputNumber
+                        formControlName="quantity"
+                        [min]="1"
+                        [showButtons]="true"
+                      ></p-inputNumber>
+                    </td>
+                    <td class="cost-cell">
+                      <p-inputNumber
+                        formControlName="unitCost"
+                        [min]="0"
+                        mode="currency"
+                        currency="UGX"
+                        locale="en-UG"
+                      ></p-inputNumber>
+                    </td>
+                    <td class="total-cell">
+                      {{
+                        formatCurrency(
+                          (item.get('quantity')?.value || 0) * (item.get('unitCost')?.value || 0)
+                        )
+                      }}
+                    </td>
+                    @if (canEdit()) {
+                      <td class="action-cell">
+                        <button
+                          pButton
+                          type="button"
+                          icon="pi pi-trash"
+                          class="p-button-text p-button-danger p-button-sm"
+                          [disabled]="itemsFormArray.length <= 1"
+                          (click)="removeItem($index)"
+                        ></button>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-label">Total Amount</td>
+                  <td class="total-value">{{ formatCurrency(totalAmount()) }}</td>
+                  @if (canEdit()) {
+                    <td></td>
+                  }
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="button"
+          label="Cancel"
+          class="p-button-outlined"
+          (click)="onCancel()"
+        ></button>
+        @if (canEdit()) {
+          <button
+            pButton
+            type="submit"
+            [label]="isEditMode() ? 'Update' : 'Create'"
+            [loading]="isSaving()"
+          ></button>
+        }
+      </div>
+    </form>
+  }
+</div>
+
+<!-- Product Selector Modal -->
+<p-dialog
+  header="Select Product"
+  [(visible)]="showProductModal"
+  [modal]="true"
+  [style]="{ width: '600px', maxHeight: '80vh' }"
+  [dismissableMask]="true"
+>
+  <div class="product-modal">
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search products by name or SKU..."
+        [ngModel]="productSearch()"
+        (ngModelChange)="onProductSearchChange($event)"
+      />
+      @if (isLoadingProducts()) {
+        <i class="pi pi-spin pi-spinner loading-indicator"></i>
+      }
+    </div>
+
+    <div class="products-list">
+      @if (isLoadingProducts()) {
+        <div class="loading-products">
+          <i class="pi pi-spin pi-spinner"></i>
+          <p>Loading products...</p>
+        </div>
+      } @else if (products().length === 0) {
+        <div class="no-products">
+          <i class="pi pi-inbox"></i>
+          <p>
+            {{
+              productSearch()
+                ? 'No products found for "' + productSearch() + '"'
+                : 'Type to search products'
+            }}
+          </p>
+        </div>
+      } @else {
+        @for (product of products(); track product.id) {
+          <div class="product-item" (click)="selectProduct(product)">
+            <div class="product-info">
+              <span class="name">{{ product.name }}</span>
+              <span class="sku">SKU: {{ product.sku || 'N/A' }}</span>
+            </div>
+            <span class="price">{{ formatCurrency(product.price) }}</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</p-dialog>
+
+<p-toast></p-toast>

@@ -1,0 +1,336 @@
+// Hero Section
+.services-hero {
+    position: relative;
+    height: 50vh;
+    min-height: 350px;
+    max-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('/images/services-hero-image.jpeg') center center / cover no-repeat;
+    background-color: #1a2332;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(26, 35, 50, 0.8) 0%,
+            rgba(26, 35, 50, 0.85) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--space-lg);
+
+    h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        color: white;
+        margin-bottom: var(--space-sm);
+    }
+
+    .text-yellow {
+        color: var(--color-yellow);
+    }
+
+    p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.125rem;
+    }
+}
+
+// Services Section
+.services-section {
+    padding: var(--space-2xl) 0;
+    background: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+
+    h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .text-primary {
+        color: var(--color-primary);
+    }
+
+    p {
+        color: #666;
+    }
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+}
+
+.service-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+
+        .service-icon {
+            background: var(--color-primary);
+            color: white;
+        }
+    }
+}
+
+.service-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    background: #fee2e2;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    transition: all var(--transition-fast);
+}
+
+.service-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: var(--space-sm);
+}
+
+.service-card p {
+    color: #666;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #555;
+        font-size: 0.875rem;
+        padding: 0.375rem 0;
+
+        svg {
+            flex-shrink: 0;
+            color: var(--color-accent);
+        }
+    }
+}
+
+// Assurance Section
+.assurance-section {
+    padding: var(--space-2xl) 0;
+    background: white;
+}
+
+.assurance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+}
+
+.assurance-step {
+    text-align: center;
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: #e53935;
+        border: 4px solid var(--color-yellow);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--space-md);
+        box-shadow: var(--shadow-md);
+
+        span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+        }
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: var(--space-sm);
+    }
+
+    p {
+        color: #666;
+        line-height: 1.6;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}
+
+.btn-white {
+    background: white;
+    color: #e53935;
+    border: 2px solid var(--color-yellow);
+
+    &:hover {
+        background: #fff8e1; // Light yellow tint
+        transform: translateY(-2px);
+    }
+}
+
+.btn-whatsapp-green {
+    background: #22c55e;
+    color: white;
+
+    &:hover {
+        background: #16a34a;
+        transform: translateY(-2px);
+    }
+}
+
+// CTA Section
+.cta-section {
+    padding: var(--space-2xl) 0;
+    background: var(--bg-dark);
+    text-align: center;
+
+    h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: var(--space-sm);
+    }
+
+    p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: var(--space-lg);
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    &.red-cta {
+        background: #e53935;
+
+        p {
+            color: white;
+            opacity: 1;
+            max-width: 700px;
+        }
+    }
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+
+    &:hover {
+        background: #c62828;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-whatsapp {
+    background: #25d366;
+    color: white;
+
+    &:hover {
+        background: #20bd5a;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+}
+
+@media (max-width: 768px) {
+    .services-hero {
+        height: 40vh;
+        min-height: 280px;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .assurance-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+
+    .service-card {
+        padding: var(--space-lg);
+    }
+
+    .cta-section {
+        padding: var(--space-xl) 0;
+
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+}

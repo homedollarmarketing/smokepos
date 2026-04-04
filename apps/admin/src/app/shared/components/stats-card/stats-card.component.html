@@ -1,0 +1,13 @@
+<div class="stats-card" [class.highlighted]="highlighted" [style.--highlight-color]="highlightColor">
+    <div class="stats-content">
+        <span class="stats-title">{{ title }}</span>
+        <span class="stats-value">{{ value }}</span>
+        @if (subtitle) {
+        <span class="stats-subtitle">{{ subtitle }}</span>
+        }
+    </div>
+
+    <div class="stats-icon" [style.background-color]="iconBgColor" [style.color]="iconColor">
+        <i [class]="icon"></i>
+    </div>
+</div>

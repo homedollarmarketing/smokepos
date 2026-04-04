@@ -1,0 +1,331 @@
+@use "sass:color";
+$primary: #e31e24; // Assuming from context/name
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$border: #e5e7eb;
+$bg-light: #f9fafb;
+$radius: 0.5rem;
+
+.vehicles-page {
+    padding: 1rem 0;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $text-dark;
+        margin: 0;
+    }
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: $radius;
+    font-weight: 500;
+    font-size: 0.875rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 0.5rem;
+
+    &.btn-primary {
+        background: $primary;
+        color: white;
+
+        &:hover {
+            background: color.adjust($primary, $lightness: -10%);
+        }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+
+    &.btn-outline {
+        background: white;
+        border-color: $border;
+        color: $text-dark;
+
+        &:hover {
+            background: $bg-light;
+        }
+    }
+}
+
+.loading-state {
+    text-align: center;
+    padding: 4rem;
+    color: $text-light;
+
+    .spinner {
+        border: 3px solid $bg-light;
+        border-top: 3px solid $primary;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: $radius;
+    border: 1px dashed $border;
+
+    .icon-circle {
+        width: 64px;
+        height: 64px;
+        background: color.adjust($primary, $lightness: 45%);
+        color: $primary;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    h3 {
+        margin-bottom: 0.5rem;
+        color: $text-dark;
+    }
+
+    p {
+        color: $text-light;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.vehicle-card {
+    background: white;
+    border: 1px solid $border;
+    border-radius: $radius;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        padding: 1rem;
+        border-bottom: 1px solid $border;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: $bg-light;
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: $text-dark;
+            margin: 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-light;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: $text-dark;
+    }
+
+    &.delete:hover {
+        color: #ef4444;
+        background: #fee2e2;
+    }
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .label {
+        color: $text-light;
+    }
+
+    .value {
+        color: $text-dark;
+        font-weight: 500;
+
+        &.vin {
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// Modal
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-dialog {
+    background: white;
+    border-radius: $radius;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $border;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: $text-dark;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: $text-light;
+        padding: 0;
+        line-height: 1;
+    }
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+// Form
+.form-group {
+    margin-bottom: 1rem;
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: $text-dark;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 0.625rem;
+        border: 1px solid $border;
+        border-radius: $radius;
+        font-size: 0.875rem;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: $primary;
+            box-shadow: 0 0 0 2px rgba($primary, 0.1);
+        }
+    }
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: $radius;
+    margin-bottom: 1.5rem;
+    position: relative;
+    font-size: 0.875rem;
+
+    &.alert-error {
+        background-color: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fee2e2;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: inherit;
+    }
+}

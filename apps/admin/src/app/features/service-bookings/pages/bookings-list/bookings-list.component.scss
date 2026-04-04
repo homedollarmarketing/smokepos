@@ -1,0 +1,191 @@
+.bookings-list-container {
+  padding: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+
+  .header-content {
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .subtitle {
+      margin: 0.25rem 0 0;
+      color: var(--text-color-secondary);
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.filters-section {
+  background: var(--surface-card);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--surface-border);
+
+  .filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+
+      i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-color-secondary);
+        font-size: 0.875rem;
+        z-index: 1;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+        border: 1px solid var(--surface-300);
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: var(--text-color);
+        background: var(--surface-0);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+
+        &::placeholder {
+          color: var(--text-color-secondary);
+        }
+
+        &:hover {
+          border-color: var(--surface-400);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px var(--primary-100);
+        }
+      }
+    }
+
+    .filter-item {
+      flex: 1;
+      min-width: 180px;
+      max-width: 220px;
+
+      :host ::ng-deep .p-select {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: var(--surface-card);
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid var(--surface-border);
+
+  i {
+    font-size: 3rem;
+    color: var(--text-color-secondary);
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    color: var(--text-color);
+  }
+
+  p {
+    margin: 0 0 1rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+.error-container i {
+  color: var(--red-500);
+}
+
+.table-container {
+  background: var(--surface-card);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--surface-hover) !important;
+    }
+  }
+
+  .customer-info,
+  .vehicle-info,
+  .date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .customer-name {
+    font-weight: 500;
+  }
+
+  .customer-email,
+  .license-plate,
+  .time {
+    font-size: 0.75rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  .pagination-info {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filters-section .filters-row {
+    flex-direction: column;
+
+    .filter-item {
+      max-width: 100%;
+    }
+  }
+}

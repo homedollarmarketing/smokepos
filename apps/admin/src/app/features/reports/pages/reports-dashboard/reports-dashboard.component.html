@@ -1,0 +1,31 @@
+<div class="reports-dashboard">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Reports</h1>
+      <p class="subtitle">
+        Insights and analytics for <strong>{{ currentBranchName() }}</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="reports-grid">
+    @for (card of reportCards; track card.route) {
+      <div class="report-card" (click)="navigateTo(card.route)">
+        <div
+          class="card-icon"
+          [style.background-color]="card.color + '15'"
+          [style.color]="card.color"
+        >
+          <i [class]="card.icon"></i>
+        </div>
+        <div class="card-content">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.description }}</p>
+        </div>
+        <div class="card-arrow">
+          <i class="pi pi-arrow-right"></i>
+        </div>
+      </div>
+    }
+  </div>
+</div>

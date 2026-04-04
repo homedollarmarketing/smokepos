@@ -1,0 +1,61 @@
+<div class="role-details-page">
+    <!-- Back Button -->
+    <button pButton label="Back to Roles" icon="pi pi-arrow-left" class="p-button-text back-btn"
+        (click)="onBack()"></button>
+
+    @if (isLoading()) {
+    <div class="loading">Loading...</div>
+    } @else if (error()) {
+    <div class="error-banner">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ error() }}</span>
+    </div>
+    } @else if (role()) {
+    <div class="card">
+        <!-- Header -->
+        <div class="role-header">
+            <div class="role-info">
+                <h1>{{ role()!.name }}</h1>
+                <code class="slug">{{ role()!.slug }}</code>
+            </div>
+            <div class="role-actions">
+                <button pButton label="Edit" icon="pi pi-pencil" class="p-button-outlined" (click)="onEdit()"></button>
+                <button pButton label="Delete" icon="pi pi-trash" class="p-button-danger p-button-outlined"
+                    (click)="onDelete()"></button>
+            </div>
+        </div>
+
+        <!-- Description -->
+        @if (role()!.description) {
+        <div class="section">
+            <h3>Description</h3>
+            <p>{{ role()!.description }}</p>
+        </div>
+        }
+
+        <!-- Permissions -->
+        <div class="section">
+            <h3>Permissions ({{ role()!.permissions.length || 0 }})</h3>
+
+            @if (role()!.permissions.length) {
+            <div class="grouped-permissions">
+                @for (group of groupedPermissions() | keyvalue; track group.key) {
+                <div class="permission-group">
+                    <h4>{{ group.key | titlecase }}</h4>
+                    <div class="permissions-list">
+                        @for (permission of group.value; track permission) {
+                        <p-tag [value]="permission" severity="info"></p-tag>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+            } @else {
+            <span class="no-permissions">No permissions assigned</span>
+            }
+        </div>
+    </div>
+    }
+
+    <p-confirmDialog></p-confirmDialog>
+</div>

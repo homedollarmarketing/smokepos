@@ -1,0 +1,133 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.sidebar {
+  width: $sidebar-width;
+  height: 100vh;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  transition: width $transition-base;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+
+  &.collapsed {
+    width: $sidebar-collapsed-width;
+
+    .logo-subtitle,
+    .branch-indicator,
+    .nav-item span {
+      display: none;
+    }
+
+    .nav-item {
+      justify-content: center;
+      padding: $spacing-md;
+    }
+  }
+}
+
+.sidebar-header {
+  padding: $spacing-lg $spacing-md;
+  border-bottom: 1px solid rgba($white, 0.1);
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-text {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $white;
+
+  .brand-primary {
+    color: $primary;
+  }
+
+  .brand-accent {
+    color: $secondary-light;
+  }
+}
+
+.logo-subtitle {
+  font-size: $font-size-xs;
+  color: $sidebar-text;
+  margin-top: $spacing-xs;
+}
+
+.branch-indicator {
+  @include flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  margin: $spacing-sm $spacing-md;
+  background: rgba($white, 0.05);
+  border-radius: $border-radius;
+  color: $sidebar-text;
+  font-size: $font-size-sm;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: $spacing-md 0;
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.nav-item {
+  @include flex-start;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  color: $sidebar-text;
+  font-size: $font-size-sm;
+  text-decoration: none;
+  transition: all $transition-fast;
+  margin: $spacing-xs $spacing-sm;
+  border-radius: $border-radius;
+  position: relative;
+
+  i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  &:hover {
+    background: $sidebar-hover-bg;
+    color: $white;
+  }
+
+  &.active {
+    background: $sidebar-active-bg;
+    color: $sidebar-active-text;
+    font-weight: 500;
+  }
+
+  // Badge for expanded sidebar
+  .nav-badge {
+    margin-left: auto;
+    background-color: $danger;
+    color: $white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  // Dot indicator for collapsed sidebar
+  .nav-badge-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: $danger;
+    border-radius: 50%;
+  }
+}

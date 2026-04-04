@@ -1,0 +1,139 @@
+<div class="purchase-orders-list">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Purchase Orders</h1>
+      <p class="subtitle">Manage and track your purchase orders</p>
+    </div>
+    @if (canCreate()) {
+      <button
+        pButton
+        label="New Purchase Order"
+        icon="pi pi-plus"
+        (click)="navigateToCreate()"
+      ></button>
+    }
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-input">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search by PO number or supplier..."
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+    <div class="filter-select">
+      <p-select
+        [options]="statusOptions"
+        [(ngModel)]="selectedStatus"
+        placeholder="Filter by status"
+        (onChange)="onStatusChange()"
+      ></p-select>
+    </div>
+    <button pButton label="Search" icon="pi pi-search" [outlined]="true" (click)="onSearch()"></button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">
+      <i class="pi pi-spin pi-spinner"></i>
+      <span>Loading purchase orders...</span>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="pi pi-file"></i>
+      </div>
+      <h3>No Purchase Orders</h3>
+      <p>Get started by creating your first purchase order</p>
+      @if (canCreate()) {
+        <button
+          pButton
+          label="Create Purchase Order"
+          icon="pi pi-plus"
+          (click)="navigateToCreate()"
+        ></button>
+      }
+    </div>
+  } @else {
+    <div class="table-container">
+      <p-table 
+        [value]="purchaseOrders()" 
+        [tableStyle]="{ 'min-width': '60rem' }"
+        styleClass="custom-table"
+        [rowHover]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th>PO Number</th>
+            <th>Supplier</th>
+            <th>Status</th>
+            <th class="text-right">Total Amount</th>
+            <th>Expected Delivery</th>
+            <th>Created</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-po>
+          <tr class="clickable-row" (click)="navigateToDetails(po)">
+            <td>
+              <span class="po-number">{{ po.poNumber }}</span>
+            </td>
+            <td>
+              <div class="supplier-info">
+                <span class="supplier-name">{{ po.supplier?.name || '-' }}</span>
+                @if (po.supplier?.code) {
+                  <span class="supplier-code">{{ po.supplier.code }}</span>
+                }
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="getStatusLabel(po.status)"
+                [severity]="getStatusSeverity(po.status)"
+              ></p-tag>
+            </td>
+            <td class="text-right">
+              <span class="amount">{{ formatCurrency(po.totalAmount) }}</span>
+            </td>
+            <td>
+              <span class="date">{{ formatDate(po.expectedDeliveryDate) }}</span>
+            </td>
+            <td>
+              <span class="date">{{ formatDate(po.createdAt) }}</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="pagination-controls">
+      <div class="pagination-info">
+        Showing {{ (pagination().page - 1) * pagination().limit + 1 }} - 
+        {{ Math.min(pagination().page * pagination().limit, pagination().total) }} 
+        of {{ pagination().total }} orders
+      </div>
+      <div class="pagination-buttons">
+        <button 
+          pButton 
+          icon="pi pi-chevron-left" 
+          [outlined]="true" 
+          [disabled]="!canGoPrev()" 
+          (click)="onPrevPage()"
+          pTooltip="Previous page"
+        ></button>
+        <span class="page-indicator">{{ pagination().page }} / {{ pagination().totalPages }}</span>
+        <button 
+          pButton 
+          icon="pi pi-chevron-right" 
+          [outlined]="true" 
+          [disabled]="!canGoNext()" 
+          (click)="onNextPage()"
+          pTooltip="Next page"
+        ></button>
+      </div>
+    </div>
+  }
+</div>
+
+<p-toast></p-toast>

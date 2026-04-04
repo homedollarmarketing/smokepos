@@ -1,0 +1,37 @@
+<div class="page" *ngIf="category">
+    <app-page-header [title]="category.name" subtitle="Category Details" [showBackButton]="true"></app-page-header>
+
+    <div class="card details-container">
+        <div class="header-section">
+            <img [src]="category.image || 'assets/placeholder.png'" alt="Category Image" class="category-img" />
+            <div class="status-badge" [class.active]="category.isActive">
+                {{ category.isActive ? 'Active' : 'Inactive' }}
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Description</span>
+                <p>{{ category.description || 'No description provided.' }}</p>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Created At</span>
+                <p>{{ category.createdAt | date:'medium' }}</p>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Updated At</span>
+                <p>{{ category.updatedAt | date:'medium' }}</p>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button pButton label="Delete" icon="pi pi-trash" class="p-button-outlined p-button-danger"
+                (click)="confirmDelete()" [loading]="isDeleting"></button>
+            <a [routerLink]="['/categories', category.id, 'edit']" class="btn-edit">Edit Category</a>
+        </div>
+    </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

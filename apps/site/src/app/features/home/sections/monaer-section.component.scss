@@ -1,0 +1,103 @@
+.monaer-section {
+    padding: var(--space-2xl) 0;
+    background: linear-gradient(180deg, #00d4e8 0%, #2de2f4 50%, #5eeafa 100%);
+    text-align: center;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+.monaer-logo {
+    margin-bottom: var(--space-lg);
+
+    img {
+        width: 280px;
+        height: 120px;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: var(--space-md);
+}
+
+p {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: var(--space-lg);
+
+    strong {
+        font-weight: 700;
+    }
+}
+
+.monaer-ctas {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    font-size: 0.9375rem;
+}
+
+.btn-dark {
+    background: #1a1a1a;
+    color: white;
+
+    &:hover {
+        background: #333;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-outline {
+    background: white;
+    color: #333;
+    border: 2px solid #333;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+    }
+}
+
+@media (max-width: 768px) {
+    .monaer-section {
+        padding: var(--space-xl) 0;
+    }
+
+    .monaer-logo img {
+        max-width: 180px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 0.9375rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+    }
+}

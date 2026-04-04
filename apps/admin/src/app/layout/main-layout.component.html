@@ -1,0 +1,15 @@
+<app-navigation-loading-bar></app-navigation-loading-bar>
+<div class="app-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <app-sidebar
+    [collapsed]="sidebarCollapsed"
+    (collapsedChange)="onSidebarCollapse($event)"
+  ></app-sidebar>
+
+  <div class="main-container">
+    <app-header pageTitle="SMOKE POS"></app-header>
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

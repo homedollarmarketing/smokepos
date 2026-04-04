@@ -1,0 +1,28 @@
+<div class="page-header">
+    <div class="header-left">
+        @if (showBackButton) {
+        <button class="back-btn" (click)="onBack()">
+            <i class="pi pi-arrow-left"></i>
+        </button>
+        }
+        <div class="page-header-content">
+            <h1 class="page-title">{{ title }}</h1>
+            @if (subtitle) {
+            <p class="page-subtitle">{{ subtitle }}</p>
+            }
+        </div>
+    </div>
+
+    @if (showAddButton) {
+    <div class="page-header-actions">
+        @if (addButtonLink) {
+        <a [routerLink]="addButtonLink">
+            <p-button [label]="addButtonLabel" [icon]="addButtonIcon" styleClass="p-button-primary"></p-button>
+        </a>
+        } @else {
+        <p-button [label]="addButtonLabel" [icon]="addButtonIcon" styleClass="p-button-primary"
+            (click)="addClick.emit()"></p-button>
+        }
+    </div>
+    }
+</div>

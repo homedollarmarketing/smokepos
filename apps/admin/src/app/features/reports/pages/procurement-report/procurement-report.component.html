@@ -1,0 +1,198 @@
+<div class="report-page">
+  <div class="page-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        (click)="goBack()"
+      ></button>
+      <div class="header-info">
+        <h1>Procurement Report</h1>
+        @if (data(); as reportData) {
+          <p class="subtitle">{{ reportData.branch.name }}</p>
+        }
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        label="Export PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [loading]="isExporting()"
+        [disabled]="!data() || isLoading()"
+        (click)="exportPdf()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <app-date-range-picker (rangeChange)="onDateRangeChange($event)" />
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p-progressSpinner strokeWidth="4" />
+      <p>Loading report data...</p>
+    </div>
+  } @else if (error()) {
+    <p-message severity="error" [text]="error()!" />
+  } @else if (data(); as reportData) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card total">
+        <div class="card-icon">
+          <i class="pi pi-file"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total POs</span>
+          <span class="value">{{ reportData.summary.totalPurchaseOrders }}</span>
+        </div>
+      </div>
+      <div class="summary-card value">
+        <div class="card-icon">
+          <i class="pi pi-dollar"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Value</span>
+          <span class="value">{{ formatCurrency(reportData.summary.totalAmount) }}</span>
+        </div>
+      </div>
+      <div class="summary-card approved">
+        <div class="card-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Approved Value</span>
+          <span class="value">{{ formatCurrency(reportData.summary.approvedAmount) }}</span>
+        </div>
+      </div>
+      <div class="summary-card received">
+        <div class="card-icon">
+          <i class="pi pi-truck"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Received Value</span>
+          <span class="value">{{ formatCurrency(reportData.summary.receivedAmount) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-card">
+        <h3>Orders by Status</h3>
+        @if (statusChartData()) {
+          <div class="chart-container">
+            <p-chart type="pie" [data]="statusChartData()!" [options]="statusChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No status data available</p>
+        }
+      </div>
+
+      <div class="chart-card">
+        <h3>Top Suppliers by Value</h3>
+        @if (supplierChartData()) {
+          <div class="chart-container">
+            <p-chart type="bar" [data]="supplierChartData()!" [options]="supplierChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No supplier data available</p>
+        }
+      </div>
+    </div>
+
+    <!-- Status Breakdown Table -->
+    <div class="table-section">
+      <h3>Status Breakdown</h3>
+      <p-table [value]="reportData.byStatus" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Status</th>
+            <th class="text-right">Count</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">Percentage</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-status>
+          <tr>
+            <td>
+              <p-tag
+                [value]="formatStatus(status.status)"
+                [severity]="getStatusSeverity(status.status)"
+              />
+            </td>
+            <td class="text-right">{{ status.count }}</td>
+            <td class="text-right">{{ formatCurrency(status.amount) }}</td>
+            <td class="text-right">{{ status.percentage | number: '1.1-1' }}%</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center text-secondary">
+              No procurement data for this period
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Suppliers Table -->
+    @if (reportData.bySupplier.length > 0) {
+      <div class="table-section">
+        <h3>Orders by Supplier</h3>
+        <p-table [value]="reportData.bySupplier" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Supplier</th>
+              <th class="text-right">Orders</th>
+              <th class="text-right">Total Amount</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-supplier>
+            <tr>
+              <td>{{ supplier.supplierName }}</td>
+              <td class="text-right">{{ supplier.orderCount }}</td>
+              <td class="text-right font-bold">{{ formatCurrency(supplier.totalAmount) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+    <!-- Recent Orders -->
+    @if (reportData.recentOrders.length > 0) {
+      <div class="table-section">
+        <h3>Recent Orders</h3>
+        <p-table [value]="reportData.recentOrders" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>PO Number</th>
+              <th>Supplier</th>
+              <th>Status</th>
+              <th class="text-right">Amount</th>
+              <th>Date</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-order>
+            <tr>
+              <td class="font-medium">{{ order.poNumber }}</td>
+              <td>{{ order.supplierName }}</td>
+              <td>
+                <p-tag
+                  [value]="formatStatus(order.status)"
+                  [severity]="getStatusSeverity(order.status)"
+                />
+              </td>
+              <td class="text-right">{{ formatCurrency(order.totalAmount) }}</td>
+              <td>{{ order.createdAt }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+  }
+</div>

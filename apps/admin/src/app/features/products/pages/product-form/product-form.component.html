@@ -1,0 +1,218 @@
+<div class="page">
+  <app-page-header
+    [title]="isEditMode ? 'Edit Product' : 'Create Product'"
+    [subtitle]="isEditMode ? 'Update product details' : 'Add a new product to the inventory'"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <div class="card form-container">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <!-- Basic Info -->
+      <div class="form-section">
+        <h3 class="section-title">Basic Information</h3>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="name">Product Name *</label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              placeholder="e.g. Brake Pad Set"
+              [class.error]="hasError('name')"
+            />
+            <div class="error-msg" *ngIf="hasError('name')">Name is required</div>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="sku">SKU</label>
+            <input id="sku" type="text" formControlName="sku" placeholder="e.g. BP-001" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            placeholder="Detailed product description..."
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Organization -->
+      <div class="form-section">
+        <h3 class="section-title">Organization</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Brand</label>
+            <button type="button" class="picker-btn" (click)="openBrandPicker()">
+              <i class="pi pi-bookmark"></i>
+              <span>{{ selectedBrand()?.name || 'Select Brand' }}</span>
+              <i class="pi pi-chevron-down"></i>
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label>Category</label>
+            <button type="button" class="picker-btn" (click)="openCategoryPicker()">
+              <i class="pi pi-tag"></i>
+              <span>{{ selectedCategory()?.name || 'Select Category' }}</span>
+              <i class="pi pi-chevron-down"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing & Inventory -->
+      <div class="form-section">
+        <h3 class="section-title">Pricing & Inventory</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price">Selling Price *</label>
+            <div class="input-prefix">
+              <span>UGX</span>
+              <input
+                id="price"
+                type="number"
+                formControlName="price"
+                min="0"
+                step="1"
+                [class.error]="hasError('price')"
+              />
+            </div>
+            <div class="error-msg" *ngIf="hasError('price')">Valid price is required</div>
+          </div>
+
+          <div class="form-group">
+            <label for="costPrice">Buying Price</label>
+            <div class="input-prefix">
+              <span>UGX</span>
+              <input
+                id="costPrice"
+                type="number"
+                formControlName="costPrice"
+                min="0"
+                step="1"
+              />
+            </div>
+            <p class="hint">Auto-updated on procurement receipt (WAC)</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          @if (canViewQuantity() && !isEditMode) {
+            <div class="form-group">
+              <label for="quantity">Initial Quantity</label>
+              <input id="quantity" type="number" formControlName="quantity" min="0" step="1" />
+            </div>
+          }
+
+          @if (canViewQuantity()) {
+            <div class="form-group">
+              <label for="lowStockThreshold">Low Stock Alert Level</label>
+              <input
+                id="lowStockThreshold"
+                type="number"
+                formControlName="lowStockThreshold"
+                min="0"
+                step="1"
+              />
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="form-section">
+        <h3 class="section-title">Product Images</h3>
+
+        <!-- Existing images (edit mode) -->
+        <div class="existing-images" *ngIf="existingImages.length > 0">
+          <label>Current Images</label>
+          <div class="image-grid">
+            <div class="image-item" *ngFor="let img of existingImages; let i = index">
+              <img [src]="img" alt="Product image" />
+              <button type="button" class="remove-btn" (click)="removeExistingImage(i)">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- New image previews -->
+        <div class="new-images" *ngIf="imagePreviews.length > 0">
+          <label>New Images</label>
+          <div class="image-grid">
+            <div class="image-item" *ngFor="let preview of imagePreviews; let i = index">
+              <img [src]="preview" alt="Preview" />
+              <button type="button" class="remove-btn" (click)="removeNewImage(i)">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- File input -->
+        <div class="form-group">
+          <label for="images">{{ isEditMode ? 'Add More Images' : 'Upload Images' }}</label>
+          <input
+            id="images"
+            type="file"
+            accept="image/*"
+            multiple
+            (change)="onFilesSelected($event)"
+          />
+          <p class="hint">You can select multiple images. Supported formats: JPG, PNG, WebP</p>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="form-section settings-row">
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" formControlName="isActive" />
+            Active
+          </label>
+        </div>
+
+        <div class="form-group checkbox">
+          <label>
+            <input type="checkbox" formControlName="isFeatured" />
+            Featured Product
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn-save" [disabled]="productForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Save Product' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Brand Picker Dialog -->
+<app-item-picker-dialog
+  title="Select Brand"
+  [(visible)]="brandPickerVisible"
+  [fetchItems]="fetchBrands"
+  [selectedItem]="selectedBrand()"
+  (itemSelected)="onBrandSelected($event)"
+>
+</app-item-picker-dialog>
+
+<!-- Category Picker Dialog -->
+<app-item-picker-dialog
+  title="Select Category"
+  [(visible)]="categoryPickerVisible"
+  [fetchItems]="fetchCategories"
+  [selectedItem]="selectedCategory()"
+  (itemSelected)="onCategorySelected($event)"
+>
+</app-item-picker-dialog>

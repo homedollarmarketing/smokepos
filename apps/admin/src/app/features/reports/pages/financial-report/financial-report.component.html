@@ -1,0 +1,223 @@
+<div class="report-page">
+  <div class="page-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        (click)="goBack()"
+      ></button>
+      <div class="header-info">
+        <h1>Financial Report</h1>
+        @if (data(); as reportData) {
+          <p class="subtitle">{{ reportData.branch.name }}</p>
+        }
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        label="Export PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [loading]="isExporting()"
+        [disabled]="!data() || isLoading()"
+        (click)="exportPdf()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <app-date-range-picker (rangeChange)="onDateRangeChange($event)" />
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p-progressSpinner strokeWidth="4" />
+      <p>Loading report data...</p>
+    </div>
+  } @else if (error()) {
+    <p-message severity="error" [text]="error()!" />
+  } @else if (data(); as reportData) {
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card revenue">
+        <div class="card-icon">
+          <i class="pi pi-arrow-up"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Revenue</span>
+          <span class="value">{{ formatCurrency(reportData.summary.totalRevenue) }}</span>
+        </div>
+      </div>
+      <div class="summary-card expenses">
+        <div class="card-icon">
+          <i class="pi pi-arrow-down"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Expenses</span>
+          <span class="value">{{ formatCurrency(reportData.summary.totalExpenses) }}</span>
+        </div>
+      </div>
+      <div class="summary-card cogs">
+        <div class="card-icon">
+          <i class="pi pi-warehouse"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Cost of Goods Sold</span>
+          <span class="value">{{ formatCurrency(reportData.summary.costOfGoodsSold) }}</span>
+        </div>
+      </div>
+      <div class="summary-card profit" [class.negative]="reportData.summary.grossProfit < 0">
+        <div class="card-icon">
+          <i
+            [class]="
+              reportData.summary.grossProfit >= 0 ? 'pi pi-arrow-up-right' : 'pi pi-arrow-down-right'
+            "
+          ></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Gross Profit</span>
+          <span class="value">{{ formatCurrency(reportData.summary.grossProfit) }}</span>
+        </div>
+      </div>
+      <div class="summary-card profit" [class.negative]="reportData.summary.netProfit < 0">
+        <div class="card-icon">
+          <i
+            [class]="
+              reportData.summary.netProfit >= 0 ? 'pi pi-arrow-up-right' : 'pi pi-arrow-down-right'
+            "
+          ></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Net Profit</span>
+          <span class="value">{{ formatCurrency(reportData.summary.netProfit) }}</span>
+        </div>
+      </div>
+      <div class="summary-card margin" [class.negative]="reportData.summary.grossProfitMargin < 0">
+        <div class="card-icon">
+          <i class="pi pi-percentage"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Gross Profit Margin</span>
+          <span class="value">{{ reportData.summary.grossProfitMargin | number: '1.1-1' }}%</span>
+        </div>
+      </div>
+      <div class="summary-card margin" [class.negative]="reportData.summary.profitMargin < 0">
+        <div class="card-icon">
+          <i class="pi pi-percentage"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Net Profit Margin</span>
+          <span class="value">{{ reportData.summary.profitMargin | number: '1.1-1' }}%</span>
+        </div>
+      </div>
+      <div class="summary-card stock-cost">
+        <div class="card-icon">
+          <i class="pi pi-box"></i>
+        </div>
+        <div class="card-content">
+          <span class="label">Total Cost of Available Stock</span>
+          <span class="value">{{ formatCurrency(reportData.summary.totalCostOfAvailableStock) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-card wide">
+        <h3>Revenue vs Expenses</h3>
+        @if (comparisonChartData()) {
+          <div class="chart-container">
+            <p-chart
+              type="bar"
+              [data]="comparisonChartData()!"
+              [options]="comparisonChartOptions"
+            />
+          </div>
+        } @else {
+          <p class="no-data">No monthly data available</p>
+        }
+      </div>
+    </div>
+
+    <div class="charts-section two-col">
+      <div class="chart-card">
+        <h3>Daily Profit Trend</h3>
+        @if (profitChartData()) {
+          <div class="chart-container">
+            <p-chart type="line" [data]="profitChartData()!" [options]="profitChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No trend data available</p>
+        }
+      </div>
+
+      <div class="chart-card">
+        <h3>Expense Breakdown</h3>
+        @if (expenseChartData()) {
+          <div class="chart-container">
+            <p-chart type="doughnut" [data]="expenseChartData()!" [options]="expenseChartOptions" />
+          </div>
+        } @else {
+          <p class="no-data">No expense data available</p>
+        }
+      </div>
+    </div>
+
+    <!-- Monthly Breakdown Table -->
+    @if (reportData.monthlyBreakdown.length > 0) {
+      <div class="table-section">
+        <h3>Monthly Breakdown</h3>
+        <p-table [value]="reportData.monthlyBreakdown" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Month</th>
+              <th class="text-right">Revenue</th>
+              <th class="text-right">Expenses</th>
+              <th class="text-right">Profit</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-month>
+            <tr>
+              <td class="font-medium">{{ month.month }}</td>
+              <td class="text-right text-success">{{ formatCurrency(month.revenue) }}</td>
+              <td class="text-right text-danger">{{ formatCurrency(month.expenses) }}</td>
+              <td
+                class="text-right font-bold"
+                [class.text-success]="month.profit >= 0"
+                [class.text-danger]="month.profit < 0"
+              >
+                {{ formatCurrency(month.profit) }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+    <!-- Expense Category Table -->
+    @if (reportData.expenseByCategory.length > 0) {
+      <div class="table-section">
+        <h3>Expense Categories</h3>
+        <p-table [value]="reportData.expenseByCategory" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Category</th>
+              <th class="text-right">Amount</th>
+              <th class="text-right">Percentage</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-category>
+            <tr>
+              <td>{{ formatCategoryName(category.category) }}</td>
+              <td class="text-right">{{ formatCurrency(category.amount) }}</td>
+              <td class="text-right">{{ category.percentage | number: '1.1-1' }}%</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+  }
+</div>

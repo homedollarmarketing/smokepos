@@ -1,0 +1,35 @@
+{
+    "name": "smoke-pos",
+    "version": "0.0.1",
+    "private": true,
+    "description": "SMOKE POS Monorepo",
+    "scripts": {
+        "dev": "pnpm --parallel -r run dev",
+        "dev:api": "pnpm --filter @smoke-pos/api run start:dev",
+        "dev:admin": "pnpm --filter @smoke-pos/admin run start",
+        "dev:site": "pnpm --filter @mrp/site run dev:ssr",
+        "build": "pnpm -r run build",
+        "build:api": "pnpm --filter @smoke-pos/api run build",
+        "build:admin": "pnpm --filter @smoke-pos/admin run build",
+        "build:site": "pnpm --filter @mrp/site run build",
+        "start:api": "pnpm --filter @smoke-pos/api run start:prod",
+        "start:admin": "pnpm --filter @smoke-pos/admin run start",
+        "start:site": "pnpm --filter @mrp/site run serve:prod:ssr",
+        "seed:admin": "pnpm --filter @smoke-pos/api run seed:admin",
+        "migration:run": "pnpm --filter @smoke-pos/api run migration:run",
+        "lint": "pnpm -r run lint",
+        "test": "pnpm -r run test",
+        "format": "prettier --write \"**/*.{ts,js,json,html,scss}\"",
+        "clean": "pnpm -r exec rm -rf node_modules dist .angular"
+    },
+    "devDependencies": {
+        "browser-sync": "^3.0.4",
+        "prettier": "^3.2.0",
+        "typescript": "~5.6.0"
+    },
+    "engines": {
+        "node": ">=20.0.0",
+        "pnpm": ">=9.0.0"
+    },
+    "packageManager": "pnpm@9.15.0"
+}

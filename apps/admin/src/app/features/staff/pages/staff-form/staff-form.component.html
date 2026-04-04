@@ -1,0 +1,133 @@
+<div class="staff-form-page">
+    <!-- Back Button -->
+    <button pButton label="Cancel" icon="pi pi-arrow-left" class="p-button-text back-btn" (click)="onCancel()"></button>
+
+    <div class="card">
+        <h1>{{ isEditMode() ? 'Edit Staff Member' : 'Add Staff Member' }}</h1>
+
+        @if (error()) {
+        <div class="error-banner">
+            <i class="pi pi-exclamation-circle"></i>
+            <span>{{ error() }}</span>
+        </div>
+        }
+
+        @if (isLoading()) {
+        <div class="loading">Loading...</div>
+        } @else {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+
+            <div class="form-section">
+                <h3>Personal Information</h3>
+
+                <div class="form-group photo-upload-group">
+                    <label>Profile Photo</label>
+                    <div class="photo-container">
+                        <div class="photo-preview" [class.has-photo]="photoPreview()">
+                            @if (photoPreview()) {
+                            <img [src]="photoPreview()" alt="Profile Preview" />
+                            } @else {
+                            <i class="pi pi-user"></i>
+                            }
+                        </div>
+                        <div class="photo-actions">
+                            <button pButton type="button" label="Choose Photo" icon="pi pi-upload"
+                                class="p-button-outlined p-button-sm" (click)="fileInput.click()"></button>
+                            <input #fileInput type="file" accept="image/*" (change)="onFileSelect($event)" hidden />
+                            <small class="upload-hint">Supported formats: JPG, PNG. Max size: 5MB.</small>
+                            @if (photoPreview()) {
+                            <button pButton type="button" icon="pi pi-times"
+                                class="p-button-danger p-button-text p-button-sm"
+                                (click)="selectedFile.set(null); photoPreview.set(null); fileInput.value = ''"></button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input id="firstName" type="text" pInputText formControlName="firstName" />
+                        @if (form.get('firstName')?.touched && form.get('firstName')?.errors?.['required']) {
+                        <small class="error">First name is required</small>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input id="lastName" type="text" pInputText formControlName="lastName" />
+                        @if (form.get('lastName')?.touched && form.get('lastName')?.errors?.['required']) {
+                        <small class="error">Last name is required</small>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Primary Phone</label>
+                        <input id="phone" type="text" pInputText formControlName="phone" />
+                    </div>
+                    <div class="form-group">
+                        <label for="secondaryPhone">Secondary Phone (Optional)</label>
+                        <input id="secondaryPhone" type="text" pInputText formControlName="secondaryPhone" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Account Information</h3>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input id="email" type="email" pInputText formControlName="email" />
+                    @if (form.get('email')?.touched && form.get('email')?.errors?.['required']) {
+                    <small class="error">Email is required</small>
+                    } @else if (form.get('email')?.touched && form.get('email')?.errors?.['email']) {
+                    <small class="error">Invalid email format</small>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="password">{{ isEditMode() ? 'Reset Password' : 'Password *' }}</label>
+                    <p-password id="password" formControlName="password" [toggleMask]="true"
+                        [feedback]="false"></p-password>
+                    @if (isEditMode()) {
+                    <small class="hint">Leave blank to keep current password</small>
+                    }
+                    @if (form.get('password')?.touched && form.get('password')?.errors?.['required']) {
+                    <small class="error">Password is required</small>
+                    } @else if (form.get('password')?.touched && form.get('password')?.errors?.['minlength']) {
+                    <small class="error">Password must be at least 6 characters</small>
+                    }
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="flex align-items-center">
+                        <p-checkbox formControlName="isActive" [binary]="true" inputId="isActive"></p-checkbox>
+                        <label for="isActive" class="ml-2 cursor-pointer mb-0">Active Account</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Assignments</h3>
+                <div class="form-group">
+                    <label for="roles">Roles</label>
+                    <p-multiSelect id="roles" [options]="roles()" formControlName="roles" optionLabel="name"
+                        optionValue="id" Display="chip" placeholder="Select Roles"></p-multiSelect>
+                </div>
+
+                <div class="form-group">
+                    <label for="branches">Branches</label>
+                    <p-multiSelect id="branches" [options]="branches()" formControlName="branchIds" optionLabel="name"
+                        optionValue="id" Display="chip" placeholder="Select Branches"></p-multiSelect>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button pButton type="button" label="Cancel" class="p-button-outlined" (click)="onCancel()"></button>
+                <button pButton type="submit" [label]="isEditMode() ? 'Update Staff Member' : 'Create Staff Member'"
+                    [loading]="isSaving()" [disabled]="form.invalid"></button>
+            </div>
+        </form>
+        }
+    </div>
+</div>

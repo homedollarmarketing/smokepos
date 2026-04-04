@@ -1,0 +1,90 @@
+<div class="audit-page">
+    <app-page-header title="Audit Logs" subtitle="Track system activities and changes"></app-page-header>
+
+    <!-- filters bar -->
+    <div class="filters-bar">
+        <div class="filter-group">
+            <div class="date-filter">
+                <p-datepicker [ngModel]="selectedDateRange()"
+                    (ngModelChange)="selectedDateRange.set($event); onDateRangeChange()" selectionMode="range"
+                    [readonlyInput]="true" placeholder="Select Date Range" [showIcon]="true" [showButtonBar]="true"
+                    (onClear)="onDateClear()" appendTo="body"></p-datepicker>
+            </div>
+
+            @if (hasActiveFilters()) {
+            <button class="clear-btn" (click)="clearFilters()">
+                <i class="pi pi-times"></i> Clear
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (error()) {
+    <div class="error-banner">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ error() }}</span>
+    </div>
+    }
+
+    <div class="card">
+        <p-table [value]="logs()" [loading]="isLoading()" styleClass="p-datatable-sm">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 15%">Date & Time</th>
+                    <th style="width: 15%">User</th>
+                    <th style="width: 10%">Action</th>
+                    <th style="width: 10%">Entity</th>
+                    <th style="width: 35%">Description</th>
+                    <th style="width: 15%">Meta</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-log>
+                <tr>
+                    <td class="whitespace-nowrap">{{ log.createdAt | date:'medium' }}</td>
+                    <td>
+                        <div class="user-info" *ngIf="log.performedBy">
+                            <span class="font-medium">{{ log.performedBy.firstName }} {{ log.performedBy.lastName
+                                }}</span>
+                            <small class="text-gray-500 block">{{ log.performedBy.email }}</small>
+                        </div>
+                        <span *ngIf="!log.performedBy && log.performedById" class="text-gray-400">Unknown ({{
+                            log.performedById }})</span>
+                        <span *ngIf="!log.performedBy && !log.performedById" class="text-gray-400">System</span>
+                    </td>
+                    <td>
+                        <p-tag [severity]="getActionSeverity(log.action)" [value]="log.action"></p-tag>
+                    </td>
+                    <td>
+                        <span class="capitalize">{{ log.targetType }}</span>
+                        <small class="block text-gray-500" *ngIf="log.targetId">{{ log.targetId }}</small>
+                    </td>
+                    <td>{{ log.description }}</td>
+                    <td>
+                        <div class="meta-info">
+                            <small class="block text-gray-500" *ngIf="log.ipAddress">IP: {{ log.ipAddress }}</small>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="empty-message">
+                        No logs found matching criteria.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button pButton label="Prev" icon="pi pi-chevron-left" class="p-button-outlined p-button-sm"
+                [disabled]="!canGoPrev()" (click)="onPrevPage()"></button>
+            <span class="page-info">
+                Page {{ pagination().page }} of {{ pagination().totalPages }}
+            </span>
+            <button pButton label="Next" icon="pi pi-chevron-right" iconPos="right"
+                class="p-button-outlined p-button-sm" [disabled]="!canGoNext()" (click)="onNextPage()"></button>
+        </div>
+    </div>
+</div>

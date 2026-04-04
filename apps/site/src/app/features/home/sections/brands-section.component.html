@@ -1,0 +1,57 @@
+<section class="brands-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured <span class="text-primary">Brands</span></h2>
+            <p>Premium parts for the world's most prestigious automotive brands</p>
+        </div>
+
+        <div class="brands-marquee" [class.paused]="isPaused">
+            <div class="brands-track">
+                <!-- First set of brands -->
+                @for (brand of brands(); track brand.id) {
+                <a [routerLink]="['/store']" [queryParams]="{brand: brand.slug}" class="brand-logo"
+                    (mouseenter)="pauseAnimation()" (mouseleave)="resumeAnimation()">
+                    @if (brand.logoUrl) {
+                    <img [src]="brand.logoUrl" [alt]="brand.name">
+                    } @else {
+                    <span class="brand-name">{{ brand.name }}</span>
+                    }
+                </a>
+                }
+                <!-- Duplicate set for seamless infinite loop -->
+                @for (brand of brands(); track 'dup-' + brand.id) {
+                <a [routerLink]="['/store']" [queryParams]="{brand: brand.slug}" class="brand-logo"
+                    (mouseenter)="pauseAnimation()" (mouseleave)="resumeAnimation()">
+                    @if (brand.logoUrl) {
+                    <img [src]="brand.logoUrl" [alt]="brand.name">
+                    } @else {
+                    <span class="brand-name">{{ brand.name }}</span>
+                    }
+                </a>
+                }
+            </div>
+        </div>
+
+        @if (isLoading()) {
+        <div class="brands-loading">
+            @for (i of [1,2,3,4,5,6]; track i) {
+            <div class="brand-logo skeleton">
+                <div class="skeleton-circle"></div>
+            </div>
+            }
+        </div>
+        }
+
+        <div class="trust-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <div>
+                <p><strong>Trusted by owners of luxury vehicles worldwide</strong></p>
+                <span>Authentic parts for all premium brands</span>
+            </div>
+        </div>
+    </div>
+</section>

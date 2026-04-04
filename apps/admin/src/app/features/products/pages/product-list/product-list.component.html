@@ -1,0 +1,194 @@
+<div class="products-page">
+  <app-page-header
+    title="Products Management"
+    subtitle="Manage your product catalog, prices, and stock"
+    [showAddButton]="true"
+    addButtonLabel="Add New Product"
+    (addClick)="onCreate()"
+  ></app-page-header>
+
+  <!-- Search & Filters Bar -->
+  <div class="filters-bar">
+    <!-- Search Input -->
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        placeholder="Search by name or SKU..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
+      />
+    </div>
+
+    <!-- Filter Dropdowns & Buttons -->
+    <div class="filter-group">
+      <select [ngModel]="selectedStatus()" (ngModelChange)="onStatusChange($event)">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <select [ngModel]="selectedStockStatus()" (ngModelChange)="onStockStatusChange($event)">
+        <option value="">All Stock</option>
+        <option value="in_stock">In Stock</option>
+        <option value="low_stock">Low Stock</option>
+        <option value="out_of_stock">Out of Stock</option>
+      </select>
+
+      <!-- Brand Picker Button -->
+      <button type="button" class="picker-btn" (click)="openBrandPicker()">
+        <i class="pi pi-bookmark"></i>
+        <span>{{ selectedBrand()?.name || 'All Brands' }}</span>
+        <i class="pi pi-chevron-down"></i>
+      </button>
+
+      <!-- Category Picker Button -->
+      <button type="button" class="picker-btn" (click)="openCategoryPicker()">
+        <i class="pi pi-tag"></i>
+        <span>{{ selectedCategory()?.name || 'All Categories' }}</span>
+        <i class="pi pi-chevron-down"></i>
+      </button>
+
+      <div class="price-filter">
+        <input
+          type="number"
+          placeholder="Min"
+          [ngModel]="minPrice()"
+          (ngModelChange)="onMinPriceChange($event)"
+          min="0"
+        />
+        <span>-</span>
+        <input
+          type="number"
+          placeholder="Max"
+          [ngModel]="maxPrice()"
+          (ngModelChange)="onMaxPriceChange($event)"
+          min="0"
+        />
+      </div>
+
+      @if (hasActiveFilters()) {
+        <button class="clear-btn" (click)="clearFilters()">
+          <i class="pi pi-times"></i> Clear
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Data Table -->
+  <div class="card">
+    <p-table
+      [value]="products()"
+      [loading]="isLoading()"
+      selectionMode="single"
+      (onRowSelect)="onRowClick($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Brand</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+        <tr [pSelectableRow]="product" class="clickable-row">
+          <td>
+            <div class="product-info">
+              <img
+                [src]="product.images?.[0] || 'assets/placeholder.png'"
+                [alt]="product.name"
+                class="product-img"
+              />
+              <div class="product-details">
+                <span class="name">{{ product.name }}</span>
+                <span class="sku" *ngIf="product.sku">SKU: {{ product.sku }}</span>
+              </div>
+            </div>
+          </td>
+          <td>{{ product.category?.name || '-' }}</td>
+          <td>{{ product.brand?.name || '-' }}</td>
+          <td>{{ product.price | currency: 'UGX' : 'symbol' : '1.0-0' }}</td>
+          <td>
+            @if (canViewQuantity()) {
+              <span
+                class="stock-info"
+                [class.low-stock]="product.quantity <= product.lowStockThreshold"
+                [class.out-of-stock]="product.quantity === 0"
+              >
+                {{ product.quantity }} units
+              </span>
+            } @else {
+              <span class="stock-hidden">—</span>
+            }
+          </td>
+          <td>
+            <p-tag
+              [severity]="product.isActive ? 'success' : 'danger'"
+              [value]="product.isActive ? 'Active' : 'Inactive'"
+            ></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            No products found. Try adjusting your filters or add your first product.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button
+        pButton
+        label="Prev"
+        icon="pi pi-chevron-left"
+        class="p-button-outlined p-button-sm"
+        [disabled]="!canGoPrev()"
+        (click)="onPrevPage()"
+      ></button>
+      <span class="page-info"> Page {{ pagination().page }} of {{ pagination().totalPages }} </span>
+      <button
+        pButton
+        label="Next"
+        icon="pi pi-chevron-right"
+        iconPos="right"
+        class="p-button-outlined p-button-sm"
+        [disabled]="!canGoNext()"
+        (click)="onNextPage()"
+      ></button>
+    </div>
+  </div>
+</div>
+
+<!-- Brand Picker Dialog -->
+<app-item-picker-dialog
+  title="Select Brand"
+  [(visible)]="brandPickerVisible"
+  [fetchItems]="fetchBrands"
+  [selectedItem]="selectedBrand()"
+  (itemSelected)="onBrandSelected($event)"
+>
+</app-item-picker-dialog>
+
+<!-- Category Picker Dialog -->
+<app-item-picker-dialog
+  title="Select Category"
+  [(visible)]="categoryPickerVisible"
+  [fetchItems]="fetchCategories"
+  [selectedItem]="selectedCategory()"
+  (itemSelected)="onCategorySelected($event)"
+>
+</app-item-picker-dialog>

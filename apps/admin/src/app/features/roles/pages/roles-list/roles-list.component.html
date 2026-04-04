@@ -1,0 +1,58 @@
+<div class="roles-page">
+    <app-page-header title="Roles Management" subtitle="Manage user roles and permissions" [showAddButton]="true"
+        addButtonLabel="Create Role" (addClick)="onCreate()"></app-page-header>
+
+    <!-- Error Message -->
+    @if (error()) {
+    <div class="error-banner">
+        <i class="pi pi-exclamation-circle"></i>
+        <span>{{ error() }}</span>
+    </div>
+    }
+
+    <!-- Data Table -->
+    <div class="card">
+        <p-table [value]="roles()" [loading]="isLoading()" selectionMode="single" (onRowSelect)="onRowClick($event)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Description</th>
+                    <th>Permissions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-role>
+                <tr [pSelectableRow]="role" class="clickable-row">
+                    <td>
+                        <strong>{{ role.name }}</strong>
+                    </td>
+                    <td>
+                        <code class="slug">{{ role.slug }}</code>
+                    </td>
+                    <td>{{ role.description || '-' }}</td>
+                    <td>
+                        <p-tag [value]="role.permissions?.length + ' permissions'" severity="info"></p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4" class="empty-message">
+                        No roles found. Create your first role to get started.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button pButton label="Prev" icon="pi pi-chevron-left" class="p-button-outlined p-button-sm"
+                [disabled]="!canGoPrev()" (click)="onPrevPage()"></button>
+            <span class="page-info">
+                Page {{ pagination().page }} of {{ pagination().totalPages }}
+            </span>
+            <button pButton label="Next" icon="pi pi-chevron-right" iconPos="right"
+                class="p-button-outlined p-button-sm" [disabled]="!canGoNext()" (click)="onNextPage()"></button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<p-dialog [header]="title" [(visible)]="visible" [modal]="true" [style]="{ width: '450px' }" [draggable]="false"
+    [resizable]="false" (onShow)="onShow()" (onHide)="onHide()">
+
+    <!-- Search Input -->
+    <div class="search-section">
+        <div class="search-box">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)"
+                placeholder="Search..." />
+        </div>
+    </div>
+
+    <!-- Items List -->
+    <div class="items-list" [class.loading]="isLoading()">
+        @if (isLoading()) {
+        <div class="loading-indicator">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Loading...</span>
+        </div>
+        } @else if (items().length === 0) {
+        <div class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <span>No items found</span>
+        </div>
+        } @else {
+        <ul class="item-list">
+            @for (item of items(); track item.id) {
+            <li class="item" [class.selected]="isSelected(item)" (click)="selectItem(item)">
+                <span class="item-name">{{ item.name }}</span>
+                @if (isSelected(item)) {
+                <i class="pi pi-check check-icon"></i>
+                }
+            </li>
+            }
+        </ul>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+    <div class="pagination">
+        <button pButton icon="pi pi-chevron-left" class="p-button-text p-button-sm" [disabled]="!canGoPrev()"
+            (click)="onPrevPage()"></button>
+        <span class="page-info">{{ currentPage() }} / {{ totalPages() }}</span>
+        <button pButton icon="pi pi-chevron-right" class="p-button-text p-button-sm" [disabled]="!canGoNext()"
+            (click)="onNextPage()"></button>
+    </div>
+    }
+
+    <!-- Footer -->
+    <ng-template pTemplate="footer">
+        <div class="dialog-footer">
+            <button pButton label="Clear Selection" class="p-button-text p-button-secondary" (click)="clearSelection()"
+                [disabled]="!selectedItem"></button>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,269 @@
+<div class="expense-form-page">
+  <app-page-header
+    [title]="pageTitle"
+    [subtitle]="pageSubtitle"
+    [showBackButton]="true"
+  ></app-page-header>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <p-message severity="error" [text]="error()!" styleClass="mb-3 w-full"></p-message>
+  }
+
+  <!-- Not Editable Warning -->
+  @if (!isEditable()) {
+    <p-message
+      severity="warn"
+      text="This expense has been reviewed and cannot be modified."
+      styleClass="mb-3 w-full"
+    ></p-message>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <span>Loading expense...</span>
+    </div>
+  } @else {
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <!-- Title -->
+          <div class="form-field">
+            <label for="title">Title <span class="required">*</span></label>
+            <input
+              pInputText
+              id="title"
+              formControlName="title"
+              placeholder="Enter expense title"
+            />
+            @if (form.get('title')?.invalid && form.get('title')?.touched) {
+              <small class="p-error">Title is required</small>
+            }
+          </div>
+
+          <!-- Amount -->
+          <div class="form-field">
+            <label for="amount">Amount (UGX) <span class="required">*</span></label>
+            <p-inputNumber
+              id="amount"
+              formControlName="amount"
+              mode="currency"
+              currency="UGX"
+              locale="en-UG"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="0"
+              placeholder="0"
+            ></p-inputNumber>
+            @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
+              <small class="p-error">Amount must be greater than 0</small>
+            }
+          </div>
+
+          <!-- Category -->
+          <div class="form-field">
+            <label for="category">Category <span class="required">*</span></label>
+            <p-select
+              id="category"
+              formControlName="category"
+              [options]="categoryOptions"
+              placeholder="Select a category"
+              [style]="{ width: '100%' }"
+            ></p-select>
+            @if (form.get('category')?.invalid && form.get('category')?.touched) {
+              <small class="p-error">Category is required</small>
+            }
+          </div>
+
+          <!-- Expense Date -->
+          <div class="form-field">
+            <label for="expenseDate">Expense Date <span class="required">*</span></label>
+            <p-datepicker
+              id="expenseDate"
+              formControlName="expenseDate"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+              placeholder="Select date"
+              [style]="{ width: '100%' }"
+            ></p-datepicker>
+            @if (form.get('expenseDate')?.invalid && form.get('expenseDate')?.touched) {
+              <small class="p-error">Expense date is required</small>
+            }
+          </div>
+
+          <!-- Description -->
+          <div class="form-field full-width">
+            <label for="description">Description</label>
+            <textarea
+              pInputTextarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Enter expense description (optional)"
+            ></textarea>
+          </div>
+
+          <!-- Tagged Staff Member -->
+          <div class="form-field full-width">
+            <label>Tagged Staff Member (optional)</label>
+            @if (selectedStaff()) {
+              <div class="selected-staff-display">
+                <div class="staff-info">
+                  <i class="pi pi-user"></i>
+                  <div class="staff-details">
+                    <span class="staff-name"
+                      >{{ selectedStaff()?.firstName }} {{ selectedStaff()?.lastName }}</span
+                    >
+                  </div>
+                </div>
+                @if (isEditable()) {
+                  <div class="staff-actions">
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      (click)="openStaffPicker()"
+                      pTooltip="Change staff"
+                    ></button>
+                    <button
+                      type="button"
+                      pButton
+                      icon="pi pi-times"
+                      class="p-button-text p-button-danger p-button-sm"
+                      (click)="clearStaff()"
+                      pTooltip="Remove staff"
+                    ></button>
+                  </div>
+                }
+              </div>
+            } @else if (isEditable()) {
+              <button type="button" class="picker-button" (click)="openStaffPicker()">
+                <i class="pi pi-search"></i>
+                <span>Select a staff member...</span>
+              </button>
+            } @else {
+              <span class="text-secondary">No staff member tagged</span>
+            }
+          </div>
+
+          <!-- Receipt Upload -->
+          @if (isEditable()) {
+            <div class="form-field full-width">
+              <label>Receipt (optional)</label>
+              <p-fileUpload
+                mode="basic"
+                name="receipt"
+                [auto]="false"
+                chooseLabel="Choose Receipt"
+                accept="image/*,application/pdf"
+                [maxFileSize]="10000000"
+                (onSelect)="onFileSelect($event)"
+                (onClear)="onFileClear()"
+              ></p-fileUpload>
+              @if (selectedFile()) {
+                <small class="file-info">Selected: {{ selectedFile()?.name }}</small>
+              }
+              @if (isEditMode() && expense()?.receiptUrl && !selectedFile()) {
+                <div class="existing-receipt">
+                  <a [href]="expense()?.receiptUrl" target="_blank" class="receipt-link">
+                    <i class="pi pi-file"></i> View current receipt
+                  </a>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Form Actions -->
+        @if (isEditable()) {
+          <div class="form-actions">
+            <button
+              pButton
+              type="button"
+              label="Cancel"
+              class="p-button-text"
+              (click)="onCancel()"
+              [disabled]="isSaving()"
+            ></button>
+            <button
+              pButton
+              type="submit"
+              [label]="isEditMode() ? 'Update Expense' : 'Create Expense'"
+              [loading]="isSaving()"
+              [disabled]="form.invalid || isSaving()"
+            ></button>
+          </div>
+        } @else {
+          <div class="form-actions">
+            <button
+              pButton
+              type="button"
+              label="Back to Details"
+              class="p-button-text"
+              (click)="onCancel()"
+            ></button>
+          </div>
+        }
+      </form>
+    </div>
+  }
+</div>
+
+<!-- Staff Picker Modal -->
+<p-dialog
+  header="Select Staff Member"
+  [(visible)]="showStaffPicker"
+  [modal]="true"
+  [style]="{ width: '500px', maxHeight: '80vh' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="picker-modal">
+    <div class="picker-search">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="staffSearchTerm"
+        (input)="searchStaff()"
+        placeholder="Search by name..."
+        autofocus
+      />
+    </div>
+
+    <div class="picker-results">
+      @if (staffLoading) {
+        <div class="picker-loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Loading staff...</span>
+        </div>
+      } @else if (filteredStaff().length === 0 && staffSearchTerm) {
+        <div class="picker-empty">
+          <i class="pi pi-users"></i>
+          <span>No staff found</span>
+        </div>
+      } @else if (filteredStaff().length === 0) {
+        <div class="picker-empty">
+          <i class="pi pi-users"></i>
+          <span>No staff available</span>
+        </div>
+      } @else {
+        <div class="picker-list">
+          @for (staff of filteredStaff(); track staff.id) {
+            <div class="picker-item" (click)="selectStaff(staff)">
+              <div class="picker-item-icon">
+                <i class="pi pi-user"></i>
+              </div>
+              <div class="picker-item-info">
+                <span class="picker-item-name">{{ staff.firstName }} {{ staff.lastName }}</span>
+                <span class="picker-item-meta">{{ staff.user.email }}</span>
+              </div>
+              <i class="pi pi-chevron-right picker-item-arrow"></i>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</p-dialog>
