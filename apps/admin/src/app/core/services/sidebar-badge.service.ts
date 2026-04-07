@@ -7,10 +7,7 @@ import { AuthService } from './auth.service';
 import { BranchService } from './branch.service';
 
 export interface SidebarBadgeCounts {
-  messages: number;
-  orders: number;
   salesPayments: number;
-  serviceBookings: number;
 }
 
 @Injectable({
@@ -25,17 +22,11 @@ export class SidebarBadgeService implements OnDestroy {
   private readonly REFRESH_INTERVAL = 60000; // 60 seconds
 
   // Badge counts signals
-  readonly messagesCount = signal(0);
-  readonly ordersCount = signal(0);
   readonly salesPaymentsCount = signal(0);
-  readonly serviceBookingsCount = signal(0);
 
   // Computed map for easy access by key
   readonly badgeCounts = computed<SidebarBadgeCounts>(() => ({
-    messages: this.messagesCount(),
-    orders: this.ordersCount(),
     salesPayments: this.salesPaymentsCount(),
-    serviceBookings: this.serviceBookingsCount(),
   }));
 
   constructor() {
@@ -80,26 +71,10 @@ export class SidebarBadgeService implements OnDestroy {
    */
   refreshCounts() {
     const branchId = this.branchService.currentBranchId();
-    const isMainBranch = this.branchService.currentBranch()?.isMain ?? false;
-
     if (!branchId) return;
 
     // Only fetch counts for endpoints the user has permission to access
     const requests: { [key: string]: any } = {};
-
-    // Messages - only on main branch with message.view permission
-    if (isMainBranch && this.authService.hasPermission('message.view')) {
-      requests['messages'] = this.http
-        .get<{ unread: number }>(`${environment.apiUrl}/messages/stats`)
-        .pipe(catchError(() => of({ unread: 0 })));
-    }
-
-    // Orders - only on main branch with order.view permission
-    if (isMainBranch && this.authService.hasPermission('order.view')) {
-      requests['orders'] = this.http
-        .get<{ pending: number }>(`${environment.apiUrl}/orders/stats`)
-        .pipe(catchError(() => of({ pending: 0 })));
-    }
 
     // Sales Payments - branch scoped with sale.approve_payment permission
     if (this.authService.hasPermission('sale.approve_payment')) {
@@ -108,29 +83,14 @@ export class SidebarBadgeService implements OnDestroy {
         .pipe(catchError(() => of({ pending: 0 })));
     }
 
-    // Service Bookings - branch scoped with serviceBooking.view permission
-    if (this.authService.hasPermission('serviceBooking.view')) {
-      requests['serviceBookings'] = this.http
-        .get<{
-          pending: number;
-        }>(`${environment.apiUrl}/service-bookings/stats?branchId=${branchId}`)
-        .pipe(catchError(() => of({ pending: 0 })));
-    }
-
     // If no requests to make, reset all counts
     if (Object.keys(requests).length === 0) {
-      this.messagesCount.set(0);
-      this.ordersCount.set(0);
       this.salesPaymentsCount.set(0);
-      this.serviceBookingsCount.set(0);
       return;
     }
 
     forkJoin(requests).subscribe((results: any) => {
-      this.messagesCount.set(results['messages']?.unread ?? 0);
-      this.ordersCount.set(results['orders']?.pending ?? 0);
       this.salesPaymentsCount.set(results['salesPayments']?.pending ?? 0);
-      this.serviceBookingsCount.set(results['serviceBookings']?.pending ?? 0);
     });
   }
 

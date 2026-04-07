@@ -87,7 +87,6 @@ export class ProductFormComponent implements OnInit {
       quantity: [0, [Validators.min(0)]],
       lowStockThreshold: [10, [Validators.min(0)]],
       isActive: [true],
-      isFeatured: [false],
       branchId: [this.branchService.currentBranchId(), Validators.required],
     });
   }
@@ -199,7 +198,6 @@ export class ProductFormComponent implements OnInit {
     if (formValue.lowStockThreshold !== undefined)
       formData.append('lowStockThreshold', formValue.lowStockThreshold.toString());
     formData.append('isActive', formValue.isActive.toString());
-    formData.append('isFeatured', formValue.isFeatured.toString());
 
     // Append image files
     this.selectedFiles.forEach((file) => {

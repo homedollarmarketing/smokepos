@@ -488,7 +488,7 @@ export class PdfService {
       cash: 'Cash',
       bank_transfer: 'Bank Transfer',
       mobile_money: 'Mobile Money',
-      pos: 'POS',
+      card: 'Card',
       other: 'Other',
     };
     return methods[method] || method;

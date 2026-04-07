@@ -54,15 +54,6 @@ export class CreateProductDto {
   @IsOptional()
   isActive?: boolean;
 
-  @Transform(({ obj, key }) => {
-    const raw = obj[key];
-    if (typeof raw === 'string') return raw === 'true';
-    return !!raw;
-  })
-  @IsBoolean()
-  @IsOptional()
-  isFeatured?: boolean;
-
   @IsInt()
   @Min(0)
   @IsOptional()
@@ -113,7 +104,6 @@ export class ProductResponseDto {
   price: number;
   costPrice: number | null;
   isActive: boolean;
-  isFeatured: boolean;
   quantity: number;
   lowStockThreshold: number;
   createdAt: Date;

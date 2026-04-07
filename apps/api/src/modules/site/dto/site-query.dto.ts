@@ -13,11 +13,6 @@ export class SiteProductsQueryDto {
   limit?: number;
 
   @IsOptional()
-  @Transform(({ value }) => value === 'true' || value === true)
-  @IsBoolean()
-  featured?: boolean;
-
-  @IsOptional()
   @IsString()
   category?: string; // category slug
 

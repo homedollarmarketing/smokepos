@@ -1,0 +1,77 @@
+<div class="page" *ngIf="branch">
+  <app-page-header [title]="branch.name" subtitle="Branch Details" [showBackButton]="true"></app-page-header>
+
+  <div class="card details-container">
+    <div class="header-section">
+      <div class="branch-color-swatch" [style.background-color]="branch.accentColor">
+        <span [style.color]="branch.txtOnAccentColor">{{ branch.name.charAt(0) }}</span>
+      </div>
+      <div class="header-badges">
+        @if (branch.isMain) {
+          <p-tag value="Main Branch" severity="info"></p-tag>
+        }
+        <p-tag
+          [severity]="branch.isActive ? 'success' : 'danger'"
+          [value]="branch.isActive ? 'Active' : 'Inactive'"
+        ></p-tag>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Address</span>
+        <p>{{ branch.address || 'No address provided.' }}</p>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Phone Number</span>
+        <p>{{ branch.phoneNumber || '-' }}</p>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Email</span>
+        <p>{{ branch.email || '-' }}</p>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Accent Color</span>
+        <div class="color-preview">
+          <span class="color-dot" [style.background-color]="branch.accentColor"></span>
+          <span>{{ branch.accentColor }}</span>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Text on Accent</span>
+        <div class="color-preview">
+          <span class="color-dot" [style.background-color]="branch.txtOnAccentColor"></span>
+          <span>{{ branch.txtOnAccentColor }}</span>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Created At</span>
+        <p>{{ branch.createdAt | date : 'medium' }}</p>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Updated At</span>
+        <p>{{ branch.updatedAt | date : 'medium' }}</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        pButton
+        label="Delete"
+        icon="pi pi-trash"
+        class="p-button-outlined p-button-danger"
+        (click)="confirmDelete()"
+        [loading]="isDeleting"
+      ></button>
+      <a [routerLink]="['/branches', branch.id, 'edit']" class="btn-edit">Edit Branch</a>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

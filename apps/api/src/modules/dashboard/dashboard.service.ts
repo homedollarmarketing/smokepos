@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Sale, SaleStatus } from '../sales/entities/sale.entity';
-import { Expense } from '../expenses/entities/expense.entity';
+import { Expense, ExpenseStatus } from '../expenses/entities/expense.entity';
 import { Product } from '../products/entities/product.entity';
 import { Branch } from '../branches/entities/branch.entity';
 import { SaleItem } from '../sales/entities/sale-item.entity';
@@ -131,6 +131,7 @@ export class DashboardService {
       .where('expense.branch_id = :branchId', { branchId })
       .andWhere('expense.expense_date >= :startDate', { startDate })
       .andWhere('expense.expense_date <= :endDate', { endDate })
+      .andWhere('expense.status = :status', { status: ExpenseStatus.APPROVED })
       .getRawOne();
 
     return result?.total ? parseFloat(result.total) : 0;
@@ -221,6 +222,7 @@ export class DashboardService {
         .where('expense.branch_id = :branchId', { branchId })
         .andWhere('expense.expense_date >= :startDate', { startDate: monthStart })
         .andWhere('expense.expense_date <= :endDate', { endDate: monthEnd })
+        .andWhere('expense.status = :status', { status: ExpenseStatus.APPROVED })
         .getRawOne();
 
       results.push({

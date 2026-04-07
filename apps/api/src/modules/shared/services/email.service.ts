@@ -16,21 +16,6 @@ export interface SendLoginNotificationDto {
   userAgent?: string;
 }
 
-export interface SendMessageReplyDto {
-  to: string;
-  customerName: string;
-  originalSubject: string;
-  originalMessage: string;
-  replyContent: string;
-}
-
-export interface SendNewMessageNotificationDto {
-  adminEmails: string[];
-  customerName: string;
-  customerEmail: string;
-  subject: string;
-  message: string;
-}
 
 @Injectable()
 export class EmailService {
@@ -173,86 +158,4 @@ export class EmailService {
     }
   }
 
-  /**
-   * Send a reply to a contact message
-   */
-  async sendMessageReply(dto: SendMessageReplyDto): Promise<void> {
-    const subject = `Re: ${dto.originalSubject}`;
-    const text = `Dear ${dto.customerName},
-
-Thank you for contacting SMOKE POS.
-
-${dto.replyContent}
-
----
-Your original message:
-"${dto.originalMessage}"
----
-
-Kind Regards,
-SMOKE POS Team`;
-
-    // In development, just log to console instead of sending
-    if (this.envService.get('NODE_ENV') !== 'production') {
-      this.logger.log(`[DEV EMAIL] To: ${dto.to}`);
-      this.logger.log(`[DEV EMAIL] Subject: ${subject}`);
-      this.logger.log(`[DEV EMAIL] Body: \n${text}`);
-      return;
-    }
-
-    try {
-      await this.transporter.sendMail({
-        from: this.envService.get('MAIL_USER'),
-        to: dto.to,
-        subject,
-        text,
-      });
-      this.logger.log(`Message reply sent to ${dto.to}`);
-    } catch (error) {
-      this.logger.error(`Failed to send message reply to ${dto.to}`, error);
-      throw error;
-    }
-  }
-
-  /**
-   * Send notification to admins about a new contact message
-   */
-  async sendNewMessageNotification(dto: SendNewMessageNotificationDto): Promise<void> {
-    if (!dto.adminEmails || dto.adminEmails.length === 0) {
-      this.logger.warn('No admin emails to notify about new message');
-      return;
-    }
-
-    const subject = `New Contact Message: ${dto.subject}`;
-    const text = `A new contact message has been received.
-
-From: ${dto.customerName} (${dto.customerEmail})
-Subject: ${dto.subject}
-
-Message:
-${dto.message}
-
----
-Please log in to the admin dashboard to view and respond to this message.`;
-
-    // In development, just log to console instead of sending
-    if (this.envService.get('NODE_ENV') !== 'production') {
-      this.logger.log(`[DEV EMAIL] To: ${dto.adminEmails.join(', ')}`);
-      this.logger.log(`[DEV EMAIL] Subject: ${subject}`);
-      this.logger.log(`[DEV EMAIL] Body: \n${text}`);
-      return;
-    }
-
-    try {
-      await this.transporter.sendMail({
-        from: this.envService.get('MAIL_USER'),
-        to: dto.adminEmails,
-        subject,
-        text,
-      });
-      this.logger.log(`New message notification sent to ${dto.adminEmails.length} admin(s)`);
-    } catch (error) {
-      this.logger.error(`Failed to send new message notification`, error);
-    }
-  }
 }

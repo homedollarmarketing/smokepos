@@ -1,0 +1,56 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.branches-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.error-banner {
+  @include flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: $danger-light;
+  color: $danger;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.card {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $gray-50;
+  }
+}
+
+.branch-name-cell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  .branch-name {
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+.empty-message {
+  text-align: center;
+  padding: $spacing-2xl;
+  color: $text-muted;
+}

@@ -33,10 +33,6 @@ export const routes: Routes = [
         loadChildren: () => import('./features/sales/sales.routes').then((m) => m.SALES_ROUTES),
       },
       {
-        path: 'orders',
-        loadChildren: () => import('./features/orders/orders.routes').then((m) => m.ORDERS_ROUTES),
-      },
-      {
         path: 'staff',
         loadChildren: () => import('./features/staff/staff.routes').then((m) => m.STAFF_ROUTES),
       },
@@ -55,16 +51,16 @@ export const routes: Routes = [
           import('./features/customers/customers.routes').then((m) => m.CUSTOMERS_ROUTES),
       },
       {
+        path: 'branches',
+        loadChildren: () =>
+          import('./features/branches/branches.routes').then((m) => m.BRANCHES_ROUTES),
+      },
+      {
         path: 'audit-logs',
         loadComponent: () =>
           import('./features/audit-logs/pages/audit-logs-list/audit-logs-list.component').then(
             (m) => m.AuditLogsListComponent
           ),
-      },
-      {
-        path: 'messages',
-        loadChildren: () =>
-          import('./features/messages/messages.routes').then((m) => m.MESSAGES_ROUTES),
       },
       {
         path: 'expenses',
@@ -80,13 +76,6 @@ export const routes: Routes = [
         path: 'reports',
         loadChildren: () =>
           import('./features/reports/reports.routes').then((m) => m.REPORTS_ROUTES),
-      },
-      {
-        path: 'service-bookings',
-        loadChildren: () =>
-          import('./features/service-bookings/service-bookings.routes').then(
-            (m) => m.SERVICE_BOOKINGS_ROUTES
-          ),
       },
     ],
   },

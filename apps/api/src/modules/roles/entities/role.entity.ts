@@ -35,13 +35,10 @@ export const PermissionGroups = {
   customer: createCRUD('customer'),
   staff: createCRUD('staff'),
   sale: [...createCRUD('sale'), 'sale.approve_payment'],
-  order: createCRUD('order'),
-  message: [...createCRUD('message'), 'message.reply'],
   expense: [...createCRUD('expense'), 'expense.approve'],
   supplier: createCRUD('supplier'),
   purchaseOrder: [...createCRUD('purchaseOrder'), 'purchaseOrder.approve', 'purchaseOrder.receive'],
   inventory: ['inventory.view', 'inventory.view_quantity', 'inventory.adjust'],
-  serviceBooking: createCRUD('serviceBooking'),
   report: [
     'report.view',
     'report.sales',

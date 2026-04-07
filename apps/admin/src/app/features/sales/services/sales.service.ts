@@ -60,7 +60,7 @@ export interface SalePayment {
   saleId: string;
   sale?: Sale;
   amount: number;
-  method: 'cash' | 'bank_transfer' | 'mobile_money' | 'pos' | 'other';
+  method: 'cash' | 'bank_transfer' | 'mobile_money' | 'card' | 'other';
   status: 'pending' | 'confirmed' | 'denied';
   reference?: string;
   notes?: string;

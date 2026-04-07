@@ -22,15 +22,10 @@ import { Vehicle } from '../modules/customers/entities/vehicle.entity';
 import { Sale } from '../modules/sales/entities/sale.entity';
 import { SaleItem } from '../modules/sales/entities/sale-item.entity';
 import { SalePayment } from '../modules/sales/entities/sale-payment.entity';
-import { Order } from '../modules/orders/entities/order.entity';
-import { OrderItem } from '../modules/orders/entities/order-item.entity';
-import { OrderPayment } from '../modules/orders/entities/order-payment.entity';
-import { Message } from '../modules/messages/entities/message.entity';
 import { Expense } from '../modules/expenses/entities/expense.entity';
 import { Supplier } from '../modules/procurement/entities/supplier.entity';
 import { PurchaseOrderItem } from '../modules/procurement/entities/purchase-order-item.entity';
 import { PurchaseOrder } from '../modules/procurement/entities/purchase-order.entity';
-import { ServiceBooking } from '../modules/service-bookings/entities/service-booking.entity';
 import { Wishlist } from '../modules/customers/entities/wishlist.entity';
 import { StockAdjustment } from '../modules/products/entities/stock-adjustment.entity';
 
@@ -52,15 +47,10 @@ export const entities = [
   Sale,
   SaleItem,
   SalePayment,
-  Order,
-  OrderItem,
-  OrderPayment,
-  Message,
   Expense,
   Supplier,
   PurchaseOrder,
   PurchaseOrderItem,
-  ServiceBooking,
   Wishlist,
 ];
 

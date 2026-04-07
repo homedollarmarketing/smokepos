@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -13,14 +13,6 @@ import { ConfirmationService } from 'primeng/api';
 
 import { CustomersService } from '../../services/customers.service';
 import { Customer, Vehicle, CreateVehicleDto } from '../../models/customer.model';
-import { OrdersService, Order } from '../../../orders/services/orders.service';
-import { ServiceBookingsService } from '../../../service-bookings/services/service-bookings.service';
-import {
-  ServiceBooking,
-  getServiceTypeLabel,
-  getBookingStatusLabel,
-  getBookingStatusSeverity,
-} from '../../../service-bookings/models/service-booking.model';
 
 interface BrandOption {
   id: string;
@@ -40,7 +32,6 @@ interface BrandOption {
     InputTextModule,
     InputNumberModule,
     ConfirmDialogModule,
-    RouterLink,
   ],
   providers: [ConfirmationService],
   templateUrl: './customer-details.component.html',
@@ -51,21 +42,11 @@ export class CustomerDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly customersService = inject(CustomersService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly ordersService = inject(OrdersService);
-  private readonly serviceBookingsService = inject(ServiceBookingsService);
 
   // State
   readonly customer = signal<Customer | null>(null);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
-
-  // Orders state
-  readonly orders = signal<Order[]>([]);
-  readonly ordersLoading = signal(false);
-
-  // Service bookings state
-  readonly serviceBookings = signal<ServiceBooking[]>([]);
-  readonly serviceBookingsLoading = signal(false);
 
   // Tab state
   activeTab = 'overview';
@@ -85,11 +66,6 @@ export class CustomerDetailsComponent implements OnInit {
 
   // TODO: Load brands from API
   brands: BrandOption[] = [];
-
-  // Helper methods for service bookings
-  readonly getServiceTypeLabel = getServiceTypeLabel;
-  readonly getBookingStatusLabel = getBookingStatusLabel;
-  readonly getBookingStatusSeverity = getBookingStatusSeverity;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -112,60 +88,8 @@ export class CustomerDetailsComponent implements OnInit {
     });
   }
 
-  loadOrders(customerId: string) {
-    this.ordersLoading.set(true);
-    this.ordersService.getOrders({ page: 1, limit: 50, customerId }).subscribe({
-      next: (response) => {
-        this.orders.set(response.data);
-        this.ordersLoading.set(false);
-      },
-      error: () => {
-        this.ordersLoading.set(false);
-      },
-    });
-  }
-
-  loadServiceBookings(customerId: string) {
-    this.serviceBookingsLoading.set(true);
-    this.serviceBookingsService.getBookings({ page: 1, limit: 50, customerId }).subscribe({
-      next: (response) => {
-        this.serviceBookings.set(response.data);
-        this.serviceBookingsLoading.set(false);
-      },
-      error: () => {
-        this.serviceBookingsLoading.set(false);
-      },
-    });
-  }
-
   setActiveTab(tab: string) {
     this.activeTab = tab;
-    const c = this.customer();
-    if (!c) return;
-
-    // Lazy load data for tabs
-    if (tab === 'orders' && this.orders().length === 0) {
-      this.loadOrders(c.id);
-    } else if (tab === 'services' && this.serviceBookings().length === 0) {
-      this.loadServiceBookings(c.id);
-    }
-  }
-
-  getOrderStatusSeverity(
-    status: string
-  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
-    const severities: Record<
-      string,
-      'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast'
-    > = {
-      pending: 'warn',
-      confirmed: 'info',
-      processing: 'info',
-      shipped: 'info',
-      delivered: 'success',
-      cancelled: 'danger',
-    };
-    return severities[status] || 'secondary';
   }
 
   onEdit() {

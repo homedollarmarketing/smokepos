@@ -11,7 +11,8 @@ import { PasswordModule } from 'primeng/password';
 
 import { StaffService } from '../../services/staff.service';
 import { RolesService, Role } from '../../../roles/services/roles.service';
-import { BranchService, Branch } from '../../../../core/services/branch.service';
+import { BranchesService } from '../../../../core/services/branches.service';
+import { BranchModel } from '../../../../core/models/branch.model';
 
 @Component({
     selector: 'app-staff-form',
@@ -34,7 +35,7 @@ export class StaffFormComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
     private readonly staffService = inject(StaffService);
     private readonly rolesService = inject(RolesService);
-    private readonly branchService = inject(BranchService); // Assuming generic service path relevant to project
+    private readonly branchesService = inject(BranchesService);
 
     readonly isEditMode = signal(false);
     readonly staffId = signal<string | null>(null);
@@ -43,7 +44,7 @@ export class StaffFormComponent implements OnInit {
     readonly error = signal<string | null>(null);
 
     readonly roles = signal<Role[]>([]);
-    readonly branches = signal<Branch[]>([]);
+    readonly branches = signal<BranchModel[]>([]);
 
     readonly selectedFile = signal<File | null>(null);
     readonly photoPreview = signal<string | null>(null);
@@ -85,8 +86,10 @@ export class StaffFormComponent implements OnInit {
             }
         });
 
-        // Load Branches
-        this.branches.set(this.branchService.availableBranches);
+        // Load Branches from API
+        this.branchesService.getBranches().subscribe({
+            next: (branches) => this.branches.set(branches),
+        });
     }
 
     loadStaff(id: string) {

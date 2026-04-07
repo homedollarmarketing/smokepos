@@ -20,13 +20,10 @@ import { ProductsModule } from './modules/products/products.module';
 import { SiteModule } from './modules/site/site.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { SalesModule } from './modules/sales/sales.module';
-import { OrdersModule } from './modules/orders/orders.module';
-import { MessagesModule } from './modules/messages/messages.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { ProcurementModule } from './modules/procurement/procurement.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { ServiceBookingsModule } from './modules/service-bookings/service-bookings.module';
 
 // Guards, Interceptors, Filters
 import { AuthGuard } from './common/guards/auth.guard';
@@ -57,13 +54,10 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
     SiteModule,
     CustomersModule,
     SalesModule,
-    OrdersModule,
-    MessagesModule,
     ExpensesModule,
     ProcurementModule,
     ReportsModule,
     DashboardModule,
-    ServiceBookingsModule,
   ],
   controllers: [],
   providers: [

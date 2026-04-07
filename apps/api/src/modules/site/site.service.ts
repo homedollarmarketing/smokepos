@@ -35,7 +35,7 @@ export class SiteService {
    * Get products for the public site (main branch only)
    */
   async getProducts(query: SiteProductsQueryDto = {}) {
-    const { page = 1, limit = 20, featured, category, brand, search } = query;
+    const { page = 1, limit = 20, category, brand, search } = query;
     const skip = (page - 1) * limit;
 
     const mainBranch = await this.getMainBranch();
@@ -49,10 +49,6 @@ export class SiteService {
       .leftJoinAndSelect('product.category', 'category')
       .where('product.branchId = :branchId', { branchId: mainBranch.id })
       .andWhere('product.isActive = :isActive', { isActive: true });
-
-    if (featured !== undefined) {
-      qb.andWhere('product.isFeatured = :isFeatured', { isFeatured: featured });
-    }
 
     // Filter by category slug
     if (category) {

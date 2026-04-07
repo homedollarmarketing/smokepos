@@ -4,11 +4,9 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { StatsCardComponent } from '../../../../shared/components/stats-card/stats-card.component';
-import { MessagesService } from '../../../../core/services/messages.service';
 import { DashboardService } from '../../../../core/services/dashboard.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BranchService } from '../../../../core/services/branch.service';
-import { Message } from '../../../../core/models/message.model';
 import { DashboardStats } from '../../../../core/models/dashboard.model';
 import { formatCurrency } from '../../../../shared/utils/currency.util';
 
@@ -40,7 +38,6 @@ interface QuickAction {
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  private readonly messagesService = inject(MessagesService);
   private readonly dashboardService = inject(DashboardService);
   private readonly authService = inject(AuthService);
   readonly branchService = inject(BranchService);
@@ -48,9 +45,6 @@ export class DashboardComponent implements OnInit {
 
   readonly dashboardStats = signal<DashboardStats | null>(null);
   readonly statsLoading = signal(false);
-  readonly unreadMessages = signal(0);
-  readonly inboxMessages = signal<Message[]>([]);
-  readonly inboxLoading = signal(false);
 
   constructor() {
     // Reload stats when branch changes
@@ -70,12 +64,6 @@ export class DashboardComponent implements OnInit {
   readonly canViewInventory = computed(() => this.authService.hasPermission('dashboard.inventory'));
 
   readonly canViewFinancial = computed(() => this.authService.hasPermission('dashboard.financial'));
-
-  readonly canViewMessages = computed(() => {
-    const hasPermission = this.authService.hasPermission('message.view');
-    const isMainBranch = this.branchService.currentBranch()?.isMain ?? false;
-    return hasPermission && isMainBranch;
-  });
 
   // Expose formatCurrency to template
   readonly formatCurrency = formatCurrency;
@@ -387,8 +375,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadDashboardStats();
-    this.loadMessageStats();
-    this.loadInboxMessages();
   }
 
   private loadDashboardStats() {
@@ -417,37 +403,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private loadMessageStats() {
-    if (this.canViewMessages()) {
-      // Messages are only for main branch - no branchId needed as backend enforces this
-      this.messagesService.getStats().subscribe({
-        next: (stats) => {
-          this.unreadMessages.set(stats.unread);
-        },
-        error: (err) => {
-          console.error('Failed to load message stats:', err);
-        },
-      });
-    }
-  }
-
-  private loadInboxMessages() {
-    if (this.canViewMessages()) {
-      this.inboxLoading.set(true);
-      // Load recent unread messages (main branch only)
-      this.messagesService.getMessages({ page: 1, limit: 5, status: 'unread' }).subscribe({
-        next: (response) => {
-          this.inboxMessages.set(response.data);
-          this.inboxLoading.set(false);
-        },
-        error: (err) => {
-          console.error('Failed to load inbox messages:', err);
-          this.inboxLoading.set(false);
-        },
-      });
-    }
-  }
-
   onStatClick(stat: StatCard) {
     if (stat.route) {
       this.router.navigate([stat.route]);
@@ -456,13 +411,5 @@ export class DashboardComponent implements OnInit {
 
   onQuickAction(action: QuickAction) {
     this.router.navigate([action.route]);
-  }
-
-  onMessageClick(message: Message) {
-    this.router.navigate(['/messages', message.id]);
-  }
-
-  viewAllMessages() {
-    this.router.navigate(['/messages']);
   }
 }

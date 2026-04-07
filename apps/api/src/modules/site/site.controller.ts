@@ -1,21 +1,12 @@
-import { Controller, Get, Post, Body, Param, Query, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param, Query, NotFoundException } from '@nestjs/common';
 import { Public } from '../../common/decorators/public.decorator';
 import { SiteService } from './site.service';
 import { SiteProductsQueryDto, SiteCategoriesQueryDto, SiteBrandsQueryDto } from './dto';
-import { CreateMessageDto } from '../messages/dto';
-import { MessagesService } from '../messages/messages.service';
-import { EmailService } from '../shared/services/email.service';
-import { EnvService } from '../../config/env.config';
 
 @Controller({ path: 'site', version: '1' })
 @Public()
 export class SiteController {
-  constructor(
-    private readonly siteService: SiteService,
-    private readonly messagesService: MessagesService,
-    private readonly emailService: EmailService,
-    private readonly envService: EnvService
-  ) {}
+  constructor(private readonly siteService: SiteService) {}
 
   /**
    * Get products for the public site
@@ -69,35 +60,5 @@ export class SiteController {
   @Get('brands')
   async getBrands(@Query() query: SiteBrandsQueryDto) {
     return this.siteService.getBrands(query);
-  }
-
-  /**
-   * Submit a contact message from the public site
-   * POST /site/messages
-   */
-  @Post('messages')
-  async createMessage(@Body() createMessageDto: CreateMessageDto) {
-    // Get main branch
-    const mainBranch = await this.messagesService.getMainBranch();
-    if (!mainBranch) {
-      throw new NotFoundException('Main branch not configured');
-    }
-
-    // Create the message
-    const message = await this.messagesService.create(createMessageDto, mainBranch.id);
-
-    // Send notification to the company email
-    const adminEmail = this.envService.get('MAIL_USER');
-    if (adminEmail) {
-      await this.emailService.sendNewMessageNotification({
-        adminEmails: [adminEmail],
-        customerName: createMessageDto.name,
-        customerEmail: createMessageDto.email,
-        subject: createMessageDto.subject,
-        message: createMessageDto.message,
-      });
-    }
-
-    return { success: true, message: 'Your message has been sent successfully' };
   }
 }

@@ -1,0 +1,65 @@
+<div class="branches-page">
+  <app-page-header
+    title="Branches"
+    subtitle="Manage store branches and locations"
+    [showAddButton]="true"
+    addButtonLabel="Add Branch"
+    (addClick)="onCreate()"
+  ></app-page-header>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Data Table -->
+  <div class="card">
+    <p-table
+      [value]="branches()"
+      [loading]="isLoading()"
+      selectionMode="single"
+      (onRowSelect)="onRowClick($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-branch>
+        <tr [pSelectableRow]="branch" class="clickable-row">
+          <td>
+            <div class="branch-name-cell">
+              <span class="branch-name">{{ branch.name }}</span>
+              @if (branch.isMain) {
+                <p-tag value="Main" severity="info" class="main-badge"></p-tag>
+              }
+            </div>
+          </td>
+          <td>{{ branch.address || '-' }}</td>
+          <td>{{ branch.phoneNumber || '-' }}</td>
+          <td>{{ branch.email || '-' }}</td>
+          <td>
+            <p-tag
+              [severity]="branch.isActive ? 'success' : 'danger'"
+              [value]="branch.isActive ? 'Active' : 'Inactive'"
+            ></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty-message">
+            No branches found. Add your first branch to get started.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

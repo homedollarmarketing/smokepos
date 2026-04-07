@@ -96,49 +96,6 @@
       </div>
     }
 
-    <!-- Inbox Section (requires message.view + main branch) -->
-    @if (canViewMessages()) {
-      <div class="card inbox">
-        <div class="inbox-header">
-          <h3>Inbox</h3>
-          <button
-            pButton
-            label="View All"
-            class="p-button-text p-button-sm"
-            (click)="viewAllMessages()"
-          ></button>
-        </div>
-
-        @if (inboxLoading()) {
-          <div class="loading">
-            <i class="pi pi-spin pi-spinner"></i>
-            <span>Loading messages...</span>
-          </div>
-        } @else if (inboxMessages().length === 0) {
-          <div class="empty-state">
-            <i class="pi pi-inbox"></i>
-            <p>No unread messages</p>
-          </div>
-        } @else {
-          <div class="inbox-list">
-            @for (message of inboxMessages(); track message.id) {
-              <div class="inbox-item" (click)="onMessageClick(message)">
-                <div class="inbox-item-header">
-                  <span class="inbox-sender">{{ message.name }}</span>
-                  <span class="inbox-date">{{ message.createdAt | date: 'short' }}</span>
-                </div>
-                <p class="inbox-subject">{{ message.subject }}</p>
-                <p class="inbox-preview">
-                  {{ message.message | slice: 0 : 80
-                  }}{{ message.message.length > 80 ? '...' : '' }}
-                </p>
-              </div>
-            }
-          </div>
-        }
-      </div>
-    }
-
     <!-- Quick Actions (ALWAYS VISIBLE if user has any create permissions) -->
     @if (hasQuickActions()) {
       <div class="card quick-actions">

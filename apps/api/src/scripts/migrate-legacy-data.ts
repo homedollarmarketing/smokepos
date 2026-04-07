@@ -212,7 +212,6 @@ async function bootstrap() {
         price: item.price,
         quantity: item.stock || 0,
         isActive: item.isActive ?? true,
-        isFeatured: item.isFeatured ?? false,
         images: images,
         branch: mainBranch,
         branchId: branchId,

@@ -46,32 +46,9 @@ export class SidebarComponent {
       permission: 'sale.approve_payment',
       badgeKey: 'salesPayments',
     },
-    {
-      label: 'Orders',
-      icon: 'pi pi-clipboard',
-      route: '/orders',
-      permission: 'order.view',
-      requiresMainBranch: true,
-      badgeKey: 'orders',
-    },
 
     // Customers & Services
     { label: 'Customers', icon: 'pi pi-users', route: '/customers', permission: 'customer.view' },
-    {
-      label: 'Service Bookings',
-      icon: 'pi pi-calendar',
-      route: '/service-bookings',
-      permission: 'serviceBooking.view',
-      badgeKey: 'serviceBookings',
-    },
-    {
-      label: 'Messages',
-      icon: 'pi pi-envelope',
-      route: '/messages',
-      permission: 'message.view',
-      requiresMainBranch: true,
-      badgeKey: 'messages',
-    },
 
     // Inventory & Products
     {
@@ -102,6 +79,7 @@ export class SidebarComponent {
     { label: 'Reports', icon: 'pi pi-chart-bar', route: '/reports', permission: 'report.view' },
 
     // Administration
+    { label: 'Branches', icon: 'pi pi-building', route: '/branches', permission: 'branch.view' },
     { label: 'Staff', icon: 'pi pi-id-card', route: '/staff', permission: 'staff.view' },
     { label: 'Roles', icon: 'pi pi-lock', route: '/roles', permission: 'role.view' },
     {

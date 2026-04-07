@@ -94,7 +94,7 @@ export class SaleDetailsComponent implements OnInit {
     { label: 'Cash', value: 'cash' },
     { label: 'Bank Transfer', value: 'bank_transfer' },
     { label: 'Mobile Money', value: 'mobile_money' },
-    { label: 'POS', value: 'pos' },
+    { label: 'Card', value: 'card' },
     { label: 'Other', value: 'other' },
   ];
 

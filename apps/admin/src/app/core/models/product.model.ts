@@ -15,7 +15,6 @@ export interface Product {
     price: number;
     costPrice: number | null;
     isActive: boolean;
-    isFeatured: boolean;
     quantity: number;
     lowStockThreshold: number;
     createdAt: Date;
@@ -33,7 +32,6 @@ export interface CreateProductDto {
     price: number;
     costPrice?: number;
     isActive?: boolean;
-    isFeatured?: boolean;
     quantity?: number;
     lowStockThreshold?: number;
 }
